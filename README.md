@@ -8,7 +8,6 @@
     python manage.py runserver
 
 ## API Маршруты
-
 <code>
    api/v1/auth/users/ - [POST] - Registration with email
    api/v1/token/ - [POST] Authorization with JWT Token
