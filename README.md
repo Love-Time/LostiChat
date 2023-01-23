@@ -8,6 +8,8 @@
     python manage.py runserver
 
 ## API Маршруты
+<pre>
+<code>
    api/v1/auth/users/ - [POST] - Registration with email
    
    api/v1/token/ - [POST] Authorization with JWT Token
@@ -15,6 +17,8 @@
    api/v1/token/refresh/ [POST] updating the access token if it has died
    
    api/v1/auth/users/me/ [GET]Information about me
+</code>
+</pre>
    
     
 ## Admin
