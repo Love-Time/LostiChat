@@ -2,16 +2,18 @@
 
 ###
 
-## The frontend is
+## The frontend is https://github.com/ladiick/losti-chat
 ## Старт
     pip install -r req.txt
     python manage.py runserver
 
 ## API Маршруты
+   api/v1/auth/users/ - [POST] - Registration with email
+   api/v1/token/ - [POST] Authorization with JWT Token
+   api/v1/token/refresh/ [POST] updating the access token if it has died
+   api/v1/auth/users/me/ [GET]Information about me
+   
     
-    api/v1/video/  -- Allow: GET, POST, HEAD, OPTIONS
-    api/v1/video/<int:pk>/ -- Allow: GET, PUT, PATCH, DELETE, HEAD, OPTIONS
-    stream/<int:pk>/ вставлять этот путь в src видео
 ## Admin
 
     admin/
