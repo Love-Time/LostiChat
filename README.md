@@ -8,12 +8,14 @@
     python manage.py runserver
 
 ## API Маршруты
-<code>
-   api/v1/auth/users/ - [POST] - Registration with email
-   api/v1/token/ - [POST] Authorization with JWT Token
-   api/v1/token/refresh/ [POST] updating the access token if it has died
-   api/v1/auth/users/me/ [GET] Information about me
-</code>
+
+    POST /api/v1/auth/users/ - Registration with email
+    POST /api/v1/token/ - Authorization with JWT Token
+    POST /api/v1/token/refresh/ - updating the access token if it has died
+    GET  /api/v1/auth/users/me/ - personal information 
+
+    GET /api/v1/conversation/ - Get List of duo chat
+
 
    
     
