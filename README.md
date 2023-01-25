@@ -14,7 +14,7 @@
     POST /api/v1/token/refresh/ - updating the access token if it has died
     GET  /api/v1/auth/users/me/ - personal information 
 
-    GET /api/v1/dialogs/ - Get List of Dialogs
+    GET /api/v1/dialogs/ - Get list of dialogs
 
 
    
