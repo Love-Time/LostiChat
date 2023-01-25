@@ -32,3 +32,13 @@ class Message(models.Model):
                 fields=['sender', 'conversation'], name='unique_migrationMessage_sender_conversation'
             )
         ]
+
+class Dialog(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_duo')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipient_duo')
+    message = models.TextField()
+    time = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ('-time',)
+
+

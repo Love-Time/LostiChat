@@ -86,3 +86,8 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = settings.TOKEN_MODEL
         fields = ['auth_token', 'user']
+
+class SimpleUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['pk', 'first_name', 'last_name', 'image']
