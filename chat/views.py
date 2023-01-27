@@ -25,7 +25,7 @@ class MessageDialogViewSet(ModelViewSet):
     serializer_class = DialogSerializer
     permission_classes = (IsAuthenticated,)
     def get_queryset(self):
-        queryset = Dialog.objects.raw(f'SELECT *, max(time) FROM "chat_messageduo" \
+        queryset = Dialog.objects.raw(f'SELECT *, max(time) FROM {Dialog._meta.db_table} \
         WHERE sender_id = {self.request.user.id} OR recipient_id = {self.request.user.id}\
         GROUP BY sender_id, recipient_id ORDER BY time DESC')
         message = list(queryset)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.serializers import SimpleUserSerializer
+from users.serializers import UserSimpleSerializer
 from .models import *
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -17,8 +17,8 @@ class ConversationSerializer(serializers.ModelSerializer):
         exclude = ['messages']
         read_only_fields = ['type']
 class DialogSerializer(serializers.ModelSerializer):
-    sender = SimpleUserSerializer(read_only=True)
-    recipient = SimpleUserSerializer(read_only=True)
+    sender = UserSimpleSerializer(read_only=True)
+    recipient = UserSimpleSerializer(read_only=True)
     class Meta:
         model = Dialog
         fields = "__all__"

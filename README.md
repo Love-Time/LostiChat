@@ -15,6 +15,7 @@
     GET  /api/v1/auth/users/me/ - personal information 
 
     GET /api/v1/dialogs/ - Get list of dialogs
+    GET /api/v1/findPeople/ Get list of people
 
 
    
