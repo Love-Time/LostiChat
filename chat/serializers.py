@@ -22,6 +22,13 @@ class DialogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dialog
         fields = "__all__"
-        read_only_fields = ['sender', 'recipient', 'time']
+
+class DialogCreateSerializer(serializers.ModelSerializer):
+    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    class Meta:
+        model = Dialog
+        fields = "__all__"
+
+
 
 

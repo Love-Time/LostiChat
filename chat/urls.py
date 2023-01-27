@@ -4,9 +4,12 @@ from .views import *
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'dialogs', MessageDialogViewSet)
+router.register(r'dialogs', DialogMessageLastList)
+router.register(r'dialog/message', DialogMessageViewSet)
 
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
+    path('api/v1/dialog/<int:pk>/', DialogApiView.as_view()),
+
 ]

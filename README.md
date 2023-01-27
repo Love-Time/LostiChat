@@ -17,6 +17,9 @@
     GET /api/v1/dialogs/ - Get list of dialogs
     GET /api/v1/findPeople/ Get list of people
 
+    GET /api/v1/dialog/<int:pk>/ - Get all messages with the interlocutor with id <int:pk>
+    POST /api/v1/dialog/message/ Send Message (message->str, recipient->int)
+
 
    
     
