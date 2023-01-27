@@ -67,7 +67,7 @@ class DialogMessageViewSet(mixins.CreateModelMixin,
 
 class DialogApiView(APIView):
     def get(self,request, pk):
-        queryset = Dialog.objects.filter(Q(recipient=self.request.user) | Q(sender=self.request.user),
-                                         Q(recipient_id=pk) | Q(sender_id=pk))
+        queryset = Dialog.objects.filter(Q(sender_id=self.request.user.id) & Q(recipient_id=pk)  |
+                                         Q(sender_id=pk) & Q(recipient_id=self.request.user.id))
         serializer = DialogSerializer(queryset, many=True)
         return  Response(serializer.data)
