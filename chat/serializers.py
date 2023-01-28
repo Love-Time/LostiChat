@@ -18,13 +18,14 @@ class ConversationSerializer(serializers.ModelSerializer):
         read_only_fields = ['type']
 class DialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(read_only=True)
-    recipient = UserSimpleSerializer(read_only=True)
+    recip = UserSimpleSerializer(source='recipient', read_only=True)
     class Meta:
         model = Dialog
         fields = "__all__"
 
 class DialogCreateSerializer(serializers.ModelSerializer):
-    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
+    recip = UserSimpleSerializer(source='recipient', read_only=True)
     class Meta:
         model = Dialog
         fields = "__all__"
