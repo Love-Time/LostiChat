@@ -29,6 +29,9 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dialog
         fields = "__all__"
+        extra_kwargs = {
+            'recipient': {'write_only': True}
+        }
 
 
 
