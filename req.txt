@@ -7,3 +7,4 @@ django-cors-headers==3.13.0
 django-cleanup==6.0.0
 djangorestframework_simplejwt
 channels
+uvicorn

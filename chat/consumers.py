@@ -35,7 +35,7 @@ class DialogMessageConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer)
         yield f'recipient__{instance.recipient}'
         yield f'pk__{instance.pk}'
 
-    @dialog_activity.groups_for_consumers
+    @dialog_activity.groups_for_consumer
     def dialog_activity(self, recipient=None):
         if recipient is not None:
             yield f'recipient__{recipient}'
