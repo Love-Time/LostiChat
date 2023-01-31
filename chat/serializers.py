@@ -21,7 +21,7 @@ class DialogSerializer(serializers.ModelSerializer):
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     class Meta:
         model = Dialog
-        fields = "__all__"
+        exclude = ['recipient']
 
 class DialogCreateSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
