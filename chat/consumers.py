@@ -2,6 +2,7 @@ from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from djangochannelsrestframework import mixins
 from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
 from djangochannelsrestframework.observer import model_observer
 
@@ -12,7 +13,9 @@ from djangochannelsrestframework.observer.generics import (ObserverModelInstance
 User = get_user_model()
 
 
-class DialogMessageConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
+class DialogMessageConsumer(mixins.CreateModelMixin,
+                            ObserverModelInstanceMixin,
+                            GenericAsyncAPIConsumer):
     queryset = Dialog.objects.all()
     serializer_class = DialogSerializer
     lookup_field = "recipient"
@@ -21,7 +24,7 @@ class DialogMessageConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer)
     async def create_dialog_message(self, message, recipient, **kwargs):
         a = await database_sync_to_async(Dialog.objects.create)(
             sender=self.scope["user"],
-            recipient=get_object_or_404(User, pk=recipient),
+            recipient=sync_to_async(get_object_or_404)(User, pk=recipient),
             message=message
         )
         sync_to_async(print)('a', a)
@@ -31,7 +34,7 @@ class DialogMessageConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer)
         await self.send_json(message)
 
     @dialog_activity.groups_for_signal
-    def dialog_activity(self, instance:Dialog, **kwargs):
+    def dialog_activity(self, instance: Dialog, **kwargs):
         yield f'recipient__{instance.recipient}'
         yield f'pk__{instance.pk}'
 
@@ -40,7 +43,5 @@ class DialogMessageConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer)
         yield f'recipient__{self.scope["user"]}'
 
     @dialog_activity.serializer
-    def dialog_activity(self, instance:Dialog, action, **kwargs):
+    def dialog_activity(self, instance: Dialog, action, **kwargs):
         return dict(data=DialogSerializer(instance).data, action=action.value, pk=instance.pk)
-
-
