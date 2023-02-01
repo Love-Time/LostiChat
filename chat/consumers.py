@@ -22,6 +22,11 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     permission_classes = [IsAuthenticated]
     lookup_field = "recipient"
 
+    async def connect(self):
+        self.user = self.scope["user"]
+        sync_to_async(print)('user__________________________________________________________', self.user)
+
+
     @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
         a = await database_sync_to_async(Dialog.objects.create)(
