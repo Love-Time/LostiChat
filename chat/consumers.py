@@ -29,7 +29,9 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
     @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
+        global recip
         recips = sync_to_async(get_object_or_404)(User, pk=recipient),
+
         for obj in recips:
             recip = obj
 
