@@ -9,6 +9,7 @@ from djangochannelsrestframework.observer import model_observer
 from .models import Dialog
 from .serializers import DialogSerializer
 from djangochannelsrestframework.observer.generics import (ObserverModelInstanceMixin, action)
+from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
@@ -18,6 +19,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
                             GenericAsyncAPIConsumer):
     queryset = Dialog.objects.all()
     serializer_class = DialogSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = "recipient"
 
     @action()
