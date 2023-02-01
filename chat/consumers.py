@@ -18,10 +18,10 @@ class DialogMessageConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer)
     lookup_field = "recipient"
 
     @action()
-    async def create_dialog_message(self, message, recipient_id, **kwargs):
+    async def create_dialog_message(self, message, recipient, **kwargs):
         a = await database_sync_to_async(Dialog.objects.create)(
             sender=self.scope["user"],
-            recipient=get_object_or_404(User, pk=recipient_id),
+            recipient=get_object_or_404(User, pk=recipient),
             message=message
         )
         sync_to_async(print)('a', a)
@@ -36,9 +36,8 @@ class DialogMessageConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer)
         yield f'pk__{instance.pk}'
 
     @dialog_activity.groups_for_consumer
-    def dialog_activity(self, recipient=None):
-        if recipient is not None:
-            yield f'recipient__{recipient}'
+    def dialog_activity(self):
+        yield f'recipient__{self.scope["user"]}'
 
     @dialog_activity.serializer
     def dialog_activity(self, instance:Dialog, action, **kwargs):
