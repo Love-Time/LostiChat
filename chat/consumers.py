@@ -1,4 +1,4 @@
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -10,7 +10,8 @@ from .models import Dialog
 from .serializers import DialogSerializer
 from djangochannelsrestframework.observer.generics import (ObserverModelInstanceMixin, action)
 from rest_framework.permissions import IsAuthenticated
-
+from channels.layers import get_channel_layer
+channel_layer = get_channel_layer()
 User = get_user_model()
 
 
@@ -19,30 +20,25 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
                             GenericAsyncAPIConsumer):
     queryset = Dialog.objects.all()
     serializer_class = DialogSerializer
-    permission_classes = [IsAuthenticated]
     lookup_field = "recipient"
 
-    # async def connect(self):
-    #     self.user = self.scope["user"]
-    #      sync_to_async(print)('user__________________________________________________________', self.user)
+    async def connect(self):
+        await self.channel_layer.group_add(f'recipient_{self.scope["user"].id}', self.channel_name)
+        await super(DialogMessageConsumer, self).connect()
 
 
     @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
-        global recip
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
-        print(recip)
 
-
-
-
-        print(recip)
-        a = await database_sync_to_async(Dialog.objects.create)(
+        response = await database_sync_to_async(Dialog.objects.create)(
             sender=self.scope["user"],
             recipient=recip,
             message=message
         )
-        sync_to_async(print)('a', a)
+        sync_to_async(print)('data', response)
+        serializer = self.get_serializer(response)
+        return {serializer.data}
 
     @model_observer(Dialog)
     async def dialog_activity(self, message, observer=None, **kwargs):
