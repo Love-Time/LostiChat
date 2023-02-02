@@ -39,7 +39,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             message=message
         )
         serializer = DialogSerializer(response)
-        return {'message': "Соси хуй"}, status.HTTP_200_OK
+        return serializer.data, status.HTTP_200_OK
 
     @model_observer(Dialog)
     async def dialog_activity(self, message, observer=None, **kwargs):
