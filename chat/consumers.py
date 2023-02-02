@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from djangochannelsrestframework import mixins
 from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
 from djangochannelsrestframework.observer import model_observer
+from rest_framework import status
 from rest_framework.response import Response
 
 from .models import Dialog
@@ -37,9 +38,8 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             recipient=recip,
             message=message
         )
-        sync_to_async(print)('data', response)
         serializer = DialogSerializer(response)
-        return Response(serializer.data)
+        return {'message': "Соси хуй"}, status.HTTP_200_OK
 
     @model_observer(Dialog)
     async def dialog_activity(self, message, observer=None, **kwargs):
