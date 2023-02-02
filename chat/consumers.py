@@ -39,8 +39,13 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             message=message
         )
         serializer = DialogSerializer(response)
-        async_to_sync(channel_layer.group_send)(f'recipient_{response.recipient.pk}', serializer.data)
+        async_to_sync(channel_layer.group_send)(f'recipient_{response.recipient.pk}', {"type":"send.message", "data": serializer.data})
         return serializer.data, status.HTTP_200_OK
+
+    def send_message(self, event):
+        print(456864384648754875457, event)
+
+
 
     @model_observer(Dialog)
     async def dialog_activity(self, message, observer=None, **kwargs):
