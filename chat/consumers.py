@@ -37,7 +37,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             message=message
         )
         sync_to_async(print)('data', response)
-        serializer = self.get_serializer(response)
+        serializer = DialogSerializer(response)
         return {serializer.data}
 
     @model_observer(Dialog)
