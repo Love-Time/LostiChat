@@ -36,15 +36,17 @@ class DialogMessageLastList(mixins.ListModelMixin,
                                         ORDER BY time DESC')
         message = list(queryset)
         len_message = len(message)
-        black_list = [None] * math.ceil(len_message/2)
+        black_list = [None] * math.ceil(len_message)
         len_balck_list = 0
+        for_delete = []
+        k=0
         for i in range(len_message):
             if {message[i].sender, message[i].recipient} not in black_list:
                 black_list[len_balck_list] = {message[i].sender, message[i].recipient}
                 len_balck_list+=1
+                k+=1
                 continue
-            del message[i]
-            i-=1
+            del message[k]
 
         return message
 
