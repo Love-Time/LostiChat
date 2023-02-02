@@ -13,6 +13,7 @@ from .serializers import DialogSerializer
 from djangochannelsrestframework.observer.generics import (ObserverModelInstanceMixin, action)
 from rest_framework.permissions import IsAuthenticated
 from channels.layers import get_channel_layer
+
 channel_layer = get_channel_layer()
 User = get_user_model()
 
@@ -28,7 +29,6 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         await self.channel_layer.group_add(f'recipient_{self.scope["user"].id}', self.channel_name)
         await super(DialogMessageConsumer, self).connect()
 
-
     @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
@@ -39,13 +39,17 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             message=message
         )
         serializer = DialogSerializer(response)
-        async_to_sync(channel_layer.group_send)(f'recipient_{response.recipient.pk}', {"type":"send.message", "data": serializer.data})
+        async_to_sync(channel_layer.group_send)(f'recipient_{response.recipient.pk}',
+                                                {"type": "send_message", "data": serializer.data})
         return serializer.data, status.HTTP_200_OK
 
     def send_message(self, event):
-        print(456864384648754875457, event)
-
-
+        self.send_json(
+            {
+                'data': event['data'],
+                'status': status.HTTP_200_OK
+            }
+        )
 
     @model_observer(Dialog)
     async def dialog_activity(self, message, observer=None, **kwargs):
