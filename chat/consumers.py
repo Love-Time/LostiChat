@@ -39,6 +39,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             message=message
         )
         serializer = DialogSerializer(response)
+        async_to_sync(channel_layer.group_send)(f'recipient_{response.recipient.pk}', serializer.data)
         return serializer.data, status.HTTP_200_OK
 
     @model_observer(Dialog)
