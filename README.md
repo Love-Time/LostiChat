@@ -1,13 +1,15 @@
-<h2 align="center">LOSTICHAT на Django 4</h2>
+<h1 align="center">LOSTICHAT Django 4</h1>
 
-###
+## Project in development
 
 ## The frontend is https://github.com/ladiick/losti-chat
-## Старт
+#### Install latest redis for windows https://github.com/tporadowski/redis/releases
+## Start
     pip install -r req.txt
-    python manage.py runserver
+    uvicorn config.asgi:application
+    
 
-## API Маршруты
+## API Routes
 
     POST /api/v1/auth/users/ - Registration with email
     POST /api/v1/token/ - Authorization with JWT Token
@@ -20,13 +22,16 @@
     GET /api/v1/dialog/<int:pk>/ - Get all messages with the interlocutor with id <int:pk>
     POST /api/v1/dialog/message/ Send Message (message->str, recipient->int)
 
-
+## WebSocket
+    connect - /ws/chat/?token=[Your JWT Token]
+### actions
+    create_dialog_message (message->str, recipient->int, request_id=new Date.getTime())
    
     
 ## Admin
 
     admin/
-    username: admin
+    username: admin@mail.ru
     password: admin
 
     
