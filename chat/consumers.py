@@ -1,3 +1,5 @@
+import json
+
 from asgiref.sync import sync_to_async, async_to_sync
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
@@ -54,8 +56,9 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         serializer = DialogSerializer(response, context={'request': self.scope})
         if response.recipient.pk!=self.user.pk:
             await channel_layer.group_send(f'recipient_{response.recipient.pk}',
-                                       {"type": "send_message", "data": serializer.data})
-        return {'data': serializer.data, 'status': status.HTTP_200_OK, "action": "sending_message"}
+                                        {"type": "send_message", "data": serializer.data})
+
+        return serializer.data, status.HTTP_200_OK
 
     async def send_message(self, event):
         await self.send_json(
