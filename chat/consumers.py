@@ -13,6 +13,7 @@ from .serializers import DialogSerializer
 from djangochannelsrestframework.observer.generics import (ObserverModelInstanceMixin, action)
 from rest_framework.permissions import IsAuthenticated
 from channels.layers import get_channel_layer
+from django.contrib.auth.models import AnonymousUser
 
 channel_layer = get_channel_layer()
 User = get_user_model()
@@ -26,8 +27,18 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     lookup_field = "recipient"
 
     async def connect(self):
-        await self.channel_layer.group_add(f'recipient_{self.scope["user"].id}', self.channel_name)
-        await super(DialogMessageConsumer, self).connect()
+        if self.scope['user'] is not AnonymousUser:
+            await self.channel_layer.group_add(f'recipient_{self.scope["user"].id}', self.channel_name)
+            await self.accept()
+        else:
+            await self.close()
+
+    async def disconnect(self, code):
+        await self.channel_layer.group_discard(
+            f'recipient_{self.scope["user"].id}',
+            self.channel_name
+        )
+        await super().disconnect(code)
 
     @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
@@ -40,14 +51,15 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         )
         serializer = DialogSerializer(response)
         await channel_layer.group_send(f'recipient_{response.recipient.pk}',
-                                                {"type": "send_message", "data": serializer.data})
+                                       {"type": "send_message", "data": serializer.data})
         return serializer.data, status.HTTP_200_OK
 
     def send_message(self, event):
         self.send_json(
             {
                 'data': event['data'],
-                'status': status.HTTP_200_OK
+                'status': status.HTTP_200_OK,
+                'action': "receiving_message"
             }
         )
 

@@ -22,11 +22,13 @@ class DuoConversationViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         return Conversation.objects.filter(members=self.request.user, type="duo")
 
+
 class DialogMessageLastList(mixins.ListModelMixin,
                             GenericViewSet):
     queryset = Dialog.objects.all()
     serializer_class = DialogSerializer
     permission_classes = (IsAuthenticated,)
+
     def get_queryset(self):
         queryset = Dialog.objects.raw(f'SELECT *, max(time) \
                                         FROM {Dialog._meta.db_table} \
@@ -36,25 +38,26 @@ class DialogMessageLastList(mixins.ListModelMixin,
                                         ORDER BY time DESC')
         message = list(queryset)
         len_message = len(message)
-        black_list = [None] * math.ceil(len_message)
-        len_balck_list = 0
-        for_delete = []
-        k=0
+        black_list = [None] * (math.ceil(len_message) + 1)
+        len_black_list = 0
+
+        k = 0
         for i in range(len_message):
-            if {message[i].sender, message[i].recipient} not in black_list:
-                black_list[len_balck_list] = {message[i].sender, message[i].recipient}
-                len_balck_list+=1
-                k+=1
+            if {message[k].sender, message[k].recipient} not in black_list:
+                black_list[len_black_list] = {message[k].sender, message[k].recipient}
+                len_black_list += 1
+                k += 1
                 continue
             del message[k]
 
         return message
 
+
 class DialogMessageViewSet(mixins.CreateModelMixin,
-                   mixins.RetrieveModelMixin,
-                   mixins.UpdateModelMixin,
-                   mixins.DestroyModelMixin,
-                   GenericViewSet):
+                           mixins.RetrieveModelMixin,
+                           mixins.UpdateModelMixin,
+                           mixins.DestroyModelMixin,
+                           GenericViewSet):
     serializer_class = DialogSerializer
     queryset = Dialog.objects.all()
     permission_classes = (IsAuthenticated, IsOwnerOrReadonly)
@@ -67,9 +70,10 @@ class DialogMessageViewSet(mixins.CreateModelMixin,
             return DialogCreateSerializer
         return DialogSerializer
 
+
 class DialogApiView(APIView):
-    def get(self,request, pk):
-        queryset = Dialog.objects.filter(Q(sender_id=self.request.user.id) & Q(recipient_id=pk)  |
+    def get(self, request, pk):
+        queryset = Dialog.objects.filter(Q(sender_id=self.request.user.id) & Q(recipient_id=pk) |
                                          Q(sender_id=pk) & Q(recipient_id=self.request.user.id))
         serializer = DialogSerializer(queryset, many=True)
-        return  Response(serializer.data)
+        return Response(serializer.data)
