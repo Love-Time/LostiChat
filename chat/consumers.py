@@ -27,11 +27,13 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     lookup_field = "recipient"
 
     async def connect(self):
-        if self.scope['user'] is not AnonymousUser:
+        self.user = self.scope['user']
+        if self.scope['user'] != AnonymousUser():
             await self.channel_layer.group_add(f'recipient_{self.scope["user"].id}', self.channel_name)
             await self.accept()
         else:
-            await self.close()
+            await self.close(code=401)
+
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(
@@ -49,13 +51,14 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             recipient=recip,
             message=message
         )
-        serializer = DialogSerializer(response)
-        await channel_layer.group_send(f'recipient_{response.recipient.pk}',
+        serializer = DialogSerializer(response, context={'request': self.scope})
+        if response.recipient.pk!=self.user.pk:
+            await channel_layer.group_send(f'recipient_{response.recipient.pk}',
                                        {"type": "send_message", "data": serializer.data})
-        return serializer.data, status.HTTP_200_OK
+        return {'data': serializer.data, 'status': status.HTTP_200_OK, "action": "sending_message"}
 
-    def send_message(self, event):
-        self.send_json(
+    async def send_message(self, event):
+        await self.send_json(
             {
                 'data': event['data'],
                 'status': status.HTTP_200_OK,
@@ -63,19 +66,19 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             }
         )
 
-    @model_observer(Dialog)
-    async def dialog_activity(self, message, observer=None, **kwargs):
-        await self.send_json(message)
-
-    @dialog_activity.groups_for_signal
-    def dialog_activity(self, instance: Dialog, **kwargs):
-        yield f'recipient__{instance.recipient}'
-        yield f'pk__{instance.pk}'
-
-    @dialog_activity.groups_for_consumer
-    def dialog_activity(self):
-        yield f'recipient__{self.scope["user"]}'
-
-    @dialog_activity.serializer
-    def dialog_activity(self, instance: Dialog, action, **kwargs):
-        return dict(data=DialogSerializer(instance).data, action=action.value, pk=instance.pk)
+    # @model_observer(Dialog)
+    # async def dialog_activity(self, message, observer=None, **kwargs):
+    #     await self.send_json(message)
+    #
+    # @dialog_activity.groups_for_signal
+    # def dialog_activity(self, instance: Dialog, **kwargs):
+    #     yield f'recipient__{instance.recipient}'
+    #     yield f'pk__{instance.pk}'
+    #
+    # @dialog_activity.groups_for_consumer
+    # def dialog_activity(self):
+    #     yield f'recipient__{self.scope["user"]}'
+    #
+    # @dialog_activity.serializer
+    # def dialog_activity(self, instance: Dialog, action, **kwargs):
+    #     return dict(data=DialogSerializer(instance).data, action=action.value, pk=instance.pk)

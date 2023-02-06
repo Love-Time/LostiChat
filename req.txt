@@ -10,3 +10,4 @@ channels
 uvicorn
 channels-redis
 djangochannelsrestframework
+websockets

@@ -19,6 +19,19 @@ class ConversationSerializer(serializers.ModelSerializer):
 class DialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(read_only=True)
     recip = UserSimpleSerializer(source='recipient', read_only=True)
+    type = serializers.SerializerMethodField('is_type_user')
+
+    def is_type_user(self, message):
+        if isinstance(self.context['request'], dict):
+            user = self.context['request']['user']
+        else:
+            user = self.context['request'].user
+
+        if message.sender.pk == user.pk:
+            return "sender"
+        else:
+            return "recip"
+
     class Meta:
         model = Dialog
         exclude = ['recipient']

@@ -60,7 +60,7 @@ class DialogMessageViewSet(mixins.CreateModelMixin,
                            GenericViewSet):
     serializer_class = DialogSerializer
     queryset = Dialog.objects.all()
-    permission_classes = (IsAuthenticated, IsOwnerOrReadonly)
+    permission_classes = (IsAuthenticated, IsOwner)
 
     def get_queryset(self):
         return Dialog.objects.filter(Q(recipient=self.request.user) | Q(sender=self.request.user))
@@ -75,5 +75,7 @@ class DialogApiView(APIView):
     def get(self, request, pk):
         queryset = Dialog.objects.filter(Q(sender_id=self.request.user.id) & Q(recipient_id=pk) |
                                          Q(sender_id=pk) & Q(recipient_id=self.request.user.id))
-        serializer = DialogSerializer(queryset, many=True)
+        serializer = DialogSerializer(queryset, many=True, context={'request': request})
+
+
         return Response(serializer.data)
