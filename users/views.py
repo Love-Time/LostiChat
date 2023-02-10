@@ -22,3 +22,6 @@ class UserSimpleList(mixins.ListModelMixin,
     queryset = User.objects.all()
     permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self):
+        return User.objects.exclude(pk=self.request.user.pk)
+
