@@ -11,7 +11,7 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .models import Friends
 from .permissions import IsOwner, IsFriend
-from .serializers import FriendSerializer
+from .serializers import FriendSerializer, FriendCreateSerializer
 
 
 def contains(lst, filter):
@@ -42,6 +42,10 @@ class FriendViewSet(mixins.CreateModelMixin,
             return [IsFriend()]
         else:
             return [IsAuthenticated()]
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return FriendCreateSerializer
+        return FriendSerializer
 
 
     def list(self, request, *args, **kwargs):
