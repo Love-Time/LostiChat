@@ -26,8 +26,10 @@ SECRET_KEY = 'django-insecure-bf5g9=54fej+=3^rh0&eany+jpx-l&4svihm+br9emx57!jx!z
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "127.0.0.1",
+    '192.168.1.35',
 ]
-#INTERNAL_IPS = ['127.0.0.1', '139.59.147.181']
+# INTERNAL_IPS = ['127.0.0.1', '139.59.147.181']
 
 # Application definition
 
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'djoser',
     'debug_toolbar',
     'users',
+    'friends',
     'chat',
     'django_cleanup.apps.CleanupConfig',
 
@@ -65,7 +68,6 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'config.middleware.BadRequest'
 ]
-
 
 ROOT_URLCONF = 'config.urls'
 
@@ -121,7 +123,6 @@ DATABASES = {
 #         'PORT': '5432'
 #     }
 # }
-
 
 
 # Password validation
@@ -194,7 +195,6 @@ REST_FRAMEWORK = {
 
     ),
 
-
 }
 
 SIMPLE_JWT = {
@@ -228,7 +228,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=10),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
-
 
 # EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.mail.ru'

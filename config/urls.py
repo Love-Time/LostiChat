@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('users.urls')),
     path('', include('chat.urls')),
+    path('', include('friends.urls')),
 ]
 
 if settings.DEBUG:
