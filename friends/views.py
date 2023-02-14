@@ -22,11 +22,12 @@ def contains(lst, filter):
     return False
 
 
-class FriendViewSet(ModelViewSet):
+class FriendViewSet(mixins.CreateModelMixin,
+                    mixins.DestroyModelMixin,
+                    GenericViewSet):
     serializer_class = FriendSerializer
     queryset = Friends.objects.all()
     permission_classes = [IsAuthenticated]
-
 
     def get_queryset(self):
         if self.action == "requests":
@@ -41,8 +42,29 @@ class FriendViewSet(ModelViewSet):
         else:
             return [IsAuthenticated()]
 
-    def list(self, request, *args, **kwargs):
-        data = list(self.get_queryset())
+    @action(detail=False, methods=['get'])
+    def me(self, request, *args, **kwargs):
+        return self.user(request, self.request.user.pk)
+
+    @action(detail=False, methods=['get'])
+    def requests(self, request):
+        data = self.get_queryset()
+        serializer = self.get_serializer(data, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['patch'])
+    def denied(self, request, pk=None):
+        obj = get_object_or_404(Friends, Q(second_user=request.user) & Q(first_user_id=pk))
+        obj.accepted = -1
+        obj.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['get'])
+    def user(self, request, pk=None):
+        if not isinstance(pk, int):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        data = list(Friends.objects.filter(Q(first_user_id=pk) | Q(second_user_id=pk)))
 
         me, another = [], []
         for x in data:
@@ -57,16 +79,3 @@ class FriendViewSet(ModelViewSet):
 
         serializer = self.get_serializer(me, many=True)
         return Response(serializer.data)
-
-    @action(detail=False, methods=['get'])
-    def requests(self, request):
-        data = self.get_queryset()
-        serializer = self.get_serializer(data, many=True)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['patch'])
-    def denied(self, request, pk=None):
-        obj = get_object_or_404(Friends, Q(second_user=request.user) & Q(first_user_id=pk))
-        obj.accepted = -1
-        obj.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
