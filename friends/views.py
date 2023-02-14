@@ -23,8 +23,9 @@ def contains(lst, filter):
 
 
 class FriendViewSet(mixins.CreateModelMixin,
-                    mixins.DestroyModelMixin,
-                    GenericViewSet):
+                   mixins.DestroyModelMixin,
+                   mixins.ListModelMixin,
+                   GenericViewSet):
     serializer_class = FriendSerializer
     queryset = Friends.objects.all()
     permission_classes = [IsAuthenticated]
@@ -42,8 +43,8 @@ class FriendViewSet(mixins.CreateModelMixin,
         else:
             return [IsAuthenticated()]
 
-    @action(detail=False, methods=['get'])
-    def me(self, request, *args, **kwargs):
+
+    def list(self, request, *args, **kwargs):
         return self.user(request, self.request.user.pk)
 
     @action(detail=False, methods=['get'])
