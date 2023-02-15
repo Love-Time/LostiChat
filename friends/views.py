@@ -61,7 +61,7 @@ class FriendViewSet(mixins.CreateModelMixin,
 
     @action(detail=True, methods=['patch'])
     def denied(self, request, pk=None):
-        obj = get_object_or_404(Friends, Q(second_user=request.user) & Q(first_user_id=pk))
+        obj = get_object_or_404(Friends, Q(second_user=request.user.pk) & Q(first_user_id=pk))
         obj.accepted = -1
         obj.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
