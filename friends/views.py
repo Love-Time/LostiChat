@@ -1,4 +1,5 @@
-from django.db.models import Q
+from django.contrib.auth import get_user_model
+from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
 from rest_framework import mixins, status
 from rest_framework.decorators import action
@@ -9,10 +10,12 @@ from rest_framework.response import Response
 # Create your views here.
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from users.serializers import UserSimpleSerializer
 from .models import Friends
 from .permissions import IsOwner, IsFriend
-from .serializers import FriendSerializer, FriendCreateSerializer, FriendRequestSerializer
+from .serializers import FriendSerializer, FriendCreateSerializer, FriendRequestSerializer, PossibleFriendsSerializer
 
+User = get_user_model()
 
 def contains(lst, filter):
     for x in lst:
@@ -71,3 +74,54 @@ class FriendViewSet(mixins.CreateModelMixin,
         data = Friends.objects.filter(Q(first_user_id=second_user) & Q(accepted=1))
         serializer = self.get_serializer(data, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def possible_friends(self, request):
+        me_friends = list(Friends.objects.filter(Q(first_user=self.request.user) & Q(accepted=1)))
+        for i in range(len(me_friends)):
+            me_friends[i] = me_friends[i].second_user
+
+        possible_friends = Friends.objects.filter(Q(first_user__in=me_friends) & Q(accepted=1)) \
+            .exclude(Q(second_user__in=me_friends) | Q(second_user=request.user)).values("second_user").annotate(count=Count('second_user')).order_by('-count')
+        serializer = PossibleFriendsSerializer(possible_friends, many=True)
+        return Response(serializer.data)
+
+    # @action(detail=False, methods=['get'])
+    # def possible_friends(self, request):
+    #     me_friends = list(Friends.objects.filter(Q(first_user=self.request.user) & Q(accepted=1)))
+    #     for i in range(len(me_friends)):
+    #         me_friends[i] = me_friends[i].second_user
+    #
+    #     possible_friends = list(Friends.objects.filter(Q(first_user__in=me_friends) & Q(accepted=1)) \
+    #         .exclude(Q(second_user__in=me_friends) | Q(second_user=request.user)).order_by('second_user'))
+    #     if possible_friends:
+    #         user_id = None
+    #         new_data = []
+    #         for i in range(len(possible_friends)):
+    #             if user_id != possible_friends[i].second_user_id:
+    #                 new_dict = {'possible_friend': UserSimpleSerializer(possible_friends[i].second_user).data,
+    #                             'friends': [UserSimpleSerializer(possible_friends[i].first_user).data]}
+    #                 new_data.append(new_dict)
+    #                 user_id = possible_friends[i].second_user_id
+    #                 continue
+    #
+    #             new_data[-1]['friends'].append(UserSimpleSerializer(possible_friends[i].first_user).data)
+    #
+    #         for i in range(len(new_data)):
+    #             new_data[i]['count'] = len(new_data[i]['friends'])
+    #
+    #         new_data = sorted(new_data, key=lambda d: d['count'])
+    #
+    #         #serializer = SimpleSerializer(possible_friends, many=True)
+    #         return Response(new_data)
+    #
+    #     data = list(User.objects.exclude(Q(pk__in=self.request.user.pk) | Q(pk__in=me_friends)))
+    #     new_data = []
+    #     for i in range(len(data)):
+    #         obj = {'possible_friend': UserSimpleSerializer(data[i]).data, 'friends': [], 'count': 0}
+    #         new_data.append(obj)
+    #     return Response(new_data)
+
+
+
+

@@ -1,10 +1,24 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 from rest_framework.validators import UniqueTogetherValidator
 
 from users.serializers import UserSimpleSerializer
 from .models import Friends
+User = get_user_model()
+class PossibleFriendsSerializer(serializers.ModelSerializer):
+    possible_friend = serializers.SerializerMethodField('get_user')
+    count = serializers.IntegerField()
 
+    def get_user(self, obj):
+        print(obj)
+        user = User.objects.get(pk=obj['second_user'])
+        return UserSimpleSerializer(user).data
+
+
+    class Meta:
+        model=Friends
+        fields = ['possible_friend', 'count']
 
 class FriendSerializer(serializers.ModelSerializer):
     friend = UserSimpleSerializer(source='second_user')
