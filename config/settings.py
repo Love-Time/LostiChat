@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+import setenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -229,14 +230,14 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.mail.ru'
-# EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
-# EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
-# EMAIL_PORT = 587
-# DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
-# DOMAIN = 'localhost:3000'
-# SITE_NAME = 'YouTube_Clone'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
+DOMAIN = 'localhost:3000'
+SITE_NAME = 'YouTube_Clone'
 
 DJOSER = {
     'LOGIN_FIELD': 'email',

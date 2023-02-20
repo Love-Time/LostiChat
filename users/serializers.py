@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from djoser.compat import get_user_email_field_name, get_user_email
 from rest_framework import serializers
-from users.models import CustomUser
+from users.models import CustomUser, Code
 from djoser.conf import settings
 from django.core import exceptions as django_exceptions
 from django.db import IntegrityError, transaction
@@ -37,6 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={"input_type": "password"}, write_only=True)
+    code = serializers.CharField(read_only=True)
 
     default_error_messages = {
         "cannot_create_user": settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR
@@ -47,7 +48,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = tuple(CustomUser.REQUIRED_FIELDS) + (
             settings.LOGIN_FIELD,
             settings.USER_ID_FIELD,
-            "password", 'first_name', 'last_name', 'gender', 'birth_date'
+            "password", 'first_name', 'last_name', 'gender', 'birth_date', 'code'
         )
 
     def validate(self, attrs):
@@ -91,3 +92,12 @@ class UserSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['pk', 'first_name', 'last_name', 'image']
+
+class CheckMailCodeSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(write_only=True)
+    class Meta:
+        model = Code
+        fields = ['email']
+        extra_kwargs = {
+            'code': {'write_only': True},
+        }

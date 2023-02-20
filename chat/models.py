@@ -14,7 +14,7 @@ class Conversation(models.Model):
     name = models.CharField(max_length=24, blank=True, null=True, verbose_name="Название")
     last_message = models.TextField(blank=True, null=True, verbose_name="Последнее сообщение", )
     members = models.ManyToManyField(User, related_name='members', verbose_name="Участники")
-    messages = models.ManyToManyField(User, through="Message", related_name='conv', blank=True, null=True)
+    messages = models.ManyToManyField(User, through="Message", related_name='conv', blank=True)
 
 
 class Message(models.Model):

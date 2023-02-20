@@ -14,7 +14,10 @@
     POST /api/v1/auth/users/ - Registration with email
     POST /api/v1/token/ - Authorization with JWT Token
     POST /api/v1/token/refresh/ - updating the access token if it has died
-    GET  /api/v1/auth/users/me/ - personal information 
+    GET  /api/v1/auth/users/me/ - personal information
+
+    GET /api/v1/auth/users/check_mail/?email=email Check mail exists with registration
+
 
     GET /api/v1/dialogs/ - Get list of dialogs
     GET /api/v1/findPeople/ Get list of people

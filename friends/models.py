@@ -17,7 +17,7 @@ class Friends(models.Model):
         (-1, "not accepted"),
         (1, "accepted"))
 
-    accepted = models.IntegerField(choices=ACCEPT, max_length=1, default=0)
+    accepted = models.IntegerField(choices=ACCEPT, default=0)
     class Meta:
         constraints = [
         models.UniqueConstraint(

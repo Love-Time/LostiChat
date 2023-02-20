@@ -1,10 +1,15 @@
+import datetime
+from random import randint
+
 from PIL import Image
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager
+from pytz import timezone
 
+from config import settings
 from config.services import crop_center, crop_center_v2
 
 
@@ -59,3 +64,23 @@ class CustomUser(AbstractUser):
             image = Image.open(self.image.path)
             image = crop_center_v2(image)
             image.save(self.image.path)
+
+class Code(models.Model):
+    email = models.EmailField(max_length=100, unique=True, primary_key=True, editable=False)
+    code = models.CharField(max_length=6)
+    time = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        self.code = ''.join(["{}".format(randint(0, 9)) for num in range(0, self._meta.get_field('code').max_length)])
+        super(Code, self).save()
+
+    def life(self):
+        time_zone = timezone(settings.TIME_ZONE)
+        time = datetime.datetime.now(time_zone)
+        if (time-self.time).seconds < 7200:
+            return True
+        return False
+
+
+
+
