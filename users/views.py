@@ -1,7 +1,7 @@
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ViewSet, ModelViewSet
@@ -14,6 +14,10 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 
 
 class UserViewSet(DjoserUserViewSet):
+    def get_permissions(self):
+        if self.action=="check_mail" or self.action=="check_code":
+            return [AllowAny()]
+        return super().get_permissions()
     def create(self, request, *args, **kwargs):
         self.check_code(request, *args, **kwargs)
         serializer = self.get_serializer(data=request.data)
@@ -54,7 +58,6 @@ class UserSimpleList(mixins.ListModelMixin,
                      GenericViewSet):
     serializer_class = UserSimpleSerializer
     queryset = User.objects.all()
-    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return User.objects.exclude(pk=self.request.user.pk)
