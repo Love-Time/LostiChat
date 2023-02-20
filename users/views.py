@@ -28,13 +28,18 @@ class UserViewSet(DjoserUserViewSet):
 
     @action(detail=False, methods=['get'])
     def check_code(self, request, *args, **kwargs):
-        code = request.data.get('code', '')
+        code = request.GET.get('code', request.data.get('code', ''))
+        email = request.GET.get('email', request.data.get('email', ''))
+
         if not code:
             raise ValidationError('pass the "code" parameter')
+        if not email:
+            raise ValidationError('pass the "email" parameter')
+
 
         try:
 
-            code_obj = Code.objects.get(email=request.data['email'])
+            code_obj = Code.objects.get(email=email)
 
             if not code_obj.life():
                 raise ValidationError('code is died, trying with new code')
@@ -44,6 +49,7 @@ class UserViewSet(DjoserUserViewSet):
 
         except Code.DoesNotExist:
             raise ValidationError("code is undefined")
+        return Response(True)
 
     @action(detail=False, methods=['get'])
     def check_mail(self, request):
