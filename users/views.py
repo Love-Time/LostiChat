@@ -15,9 +15,10 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 
 class UserViewSet(DjoserUserViewSet):
     def get_permissions(self):
-        if self.action=="check_mail" or self.action=="check_code":
+        if self.action == "check_mail" or self.action == "check_code":
             return [AllowAny()]
         return super().get_permissions()
+
     def create(self, request, *args, **kwargs):
         self.check_code(request, *args, **kwargs)
         serializer = self.get_serializer(data=request.data)
@@ -32,24 +33,22 @@ class UserViewSet(DjoserUserViewSet):
         email = request.GET.get('email', request.data.get('email', ''))
 
         if not code:
-            raise ValidationError('pass the "code" parameter')
+            return Response({'type': 0, 'message': 'pass the "code" parameter'}, status=status.HTTP_403_FORBIDDEN)
         if not email:
-            raise ValidationError('pass the "email" parameter')
-
-
+            return Response({'type': 1, 'message': 'pass the "email" parameter'}, status=status.HTTP_403_FORBIDDEN)
         try:
 
             code_obj = Code.objects.get(email=email)
 
             if not code_obj.life():
-                raise ValidationError('code is died, trying with new code')
+                return Response({'type': 2, 'message': 'code is died, trying with new code'},
+                                status=status.HTTP_403_FORBIDDEN)
 
             if code != code_obj.code:
-                raise ValidationError('code is wrong')
-
+                return Response({'type': 3, 'message': 'code is wrong'}, status=status.HTTP_403_FORBIDDEN)
         except Code.DoesNotExist:
-            raise ValidationError("code is undefined")
-        return Response(True)
+            return Response({'type': 4, 'message': 'code is undefined'}, status=status.HTTP_403_FORBIDDEN)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'])
     def check_mail(self, request):
