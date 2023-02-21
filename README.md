@@ -8,7 +8,8 @@
     pip install -r req.txt
     uvicorn config.asgi:application
     celery -A config worker -l info -P gevent (Windows)
-    celery -A config worker -l info  (Linux)
+
+    celery -A config worker -l info  (Linux) and in config.cettings.py change REDIS_HOST
 
     
 
