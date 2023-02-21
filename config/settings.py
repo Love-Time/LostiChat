@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'chat',
     'django_cleanup.apps.CleanupConfig',
 
+
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -239,7 +240,6 @@ DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
 DOMAIN = 'localhost:3000'
 SITE_NAME = 'YouTube_Clone'
 
-
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = '6379'
 CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
@@ -248,7 +248,6 @@ CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
@@ -274,3 +273,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:9000"
 ]
+
+CODE_LIFE_SECONDS = 7200

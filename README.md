@@ -11,6 +11,9 @@
 
     celery -A config worker -l info  (Linux) and in config.cettings.py change REDIS_HOST
 
+    celery -A config beat (not necessary, for clearing database codeModel every 2 hours)
+
+
     
 
 ## API Routes

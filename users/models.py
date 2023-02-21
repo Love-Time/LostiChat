@@ -77,7 +77,7 @@ class Code(models.Model):
     def life(self):
         time_zone = timezone(settings.TIME_ZONE)
         time = datetime.datetime.now(time_zone)
-        if (time-self.time).seconds < 7200:
+        if (time-self.time).seconds < settings.CODE_LIFE_SECONDS:
             return True
         return False
 
