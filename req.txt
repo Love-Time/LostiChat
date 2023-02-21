@@ -11,3 +11,6 @@ uvicorn
 channels-redis
 djangochannelsrestframework
 websockets
+celery
+redis
+gevent

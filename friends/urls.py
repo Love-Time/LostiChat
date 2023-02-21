@@ -5,7 +5,7 @@ from .views import FriendViewSet
 
 router = routers.DefaultRouter()
 router.register(r'friends', FriendViewSet)
-print(router.urls)
+
 urlpatterns = [
     path('api/v1/', include(router.urls)),
 ]
