@@ -12,6 +12,8 @@ from .serializers import *
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
+from config.settings import EMAIL_ACTIVATION
+
 
 class UserViewSet(DjoserUserViewSet):
     def get_permissions(self):
@@ -29,6 +31,8 @@ class UserViewSet(DjoserUserViewSet):
 
     @action(detail=False, methods=['get'])
     def check_code(self, request, *args, **kwargs):
+        if not EMAIL_ACTIVATION:
+            return Response(status=status.HTTP_204_NO_CONTENT)
         code = request.GET.get('code', request.data.get('code', ''))
         email = request.GET.get('email', request.data.get('email', ''))
 

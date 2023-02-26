@@ -1,0 +1,48 @@
+version: '0.1'
+
+services:
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+
+  django:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - DEBUG=1
+      - REDIS_HOST=redis
+
+  celery-worker:
+    build: .
+    command: celery -A config worker -l info -P gevent
+    depends_on:
+      - django
+      - redis
+    environment:
+      - DEBUG=1
+      - REDIS_HOST=redis
+
+  celery-beat:
+    build: .
+    command: celery -A config beat
+    depends_on:
+      - django
+      - redis
+    environment:
+      - DEBUG=1
+      - REDIS_HOST=redis
+
+  react:
+    build: ../frontend
+    ports:
+      - '3000:3000'
+
+
+
+

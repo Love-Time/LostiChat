@@ -13,6 +13,11 @@
 
     celery -A config beat (not necessary, for clearing database codeModel every 2 hours)
 
+## Start with docker-compose
+    - clone 2 projects into one folder
+    - rename losti-chat to frontend
+    - docker-compose up
+
 
     
 
