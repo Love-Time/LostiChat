@@ -38,10 +38,10 @@ services:
       - DEBUG=1
       - REDIS_HOST=redis
 
-  react:
-    build: ../frontend
-    ports:
-      - '3000:3000'
+#  react:
+#    build: ../frontend/front-end
+#    ports:
+#      - '3000:3000'
 
 
 

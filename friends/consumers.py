@@ -10,28 +10,29 @@ from djangochannelsrestframework.observer import model_observer
 from rest_framework import status
 from rest_framework.response import Response
 
-from .models import Dialog
-from .serializers import DialogSerializer
+from .models import Friends
+
 from djangochannelsrestframework.observer.generics import (ObserverModelInstanceMixin, action)
 from rest_framework.permissions import IsAuthenticated
 from channels.layers import get_channel_layer
 from django.contrib.auth.models import AnonymousUser
 
+from .serializers import FriendSerializer
+
 channel_layer = get_channel_layer()
 User = get_user_model()
 
 
-class DialogMessageConsumer(mixins.CreateModelMixin,
-                            ObserverModelInstanceMixin,
+class FriendConsumer(ObserverModelInstanceMixin,
                             GenericAsyncAPIConsumer):
-    queryset = Dialog.objects.all()
-    serializer_class = DialogSerializer
-    lookup_field = "recipient"
+    queryset = Friends.objects.all()
+    serializer_class = FriendSerializer
+
 
     async def connect(self):
         self.user = self.scope['user']
         if self.scope['user'] != AnonymousUser():
-            await self.channel_layer.group_add(f'recipient_{self.scope["user"].id}', self.channel_name)
+            await self.channel_layer.group_add(f'friend_{self.scope["user"].id}', self.channel_name)
             await self.accept()
         else:
             await self.close(code=401)
@@ -39,11 +40,36 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(
-            f'recipient_{self.scope["user"].id}',
+            f'friend_{self.scope["user"].id}',
             self.channel_name
         )
         await super().disconnect(code)
 
+
+
+
+    @action()
+    async def add_friend(self, user_pk):
+        recip_user = get_object_or_404(User, pk=user_pk)
+
+        my_request_to_friend = Friends.objects.filter(first_user=self.user, second_user=recip_user)
+        if my_request_to_friend:
+            return {
+                'type': 'exist',
+                'messgae': "The friend request has already been sent"
+            }, status.HTTP_200_OK
+
+        my_request_to_friend = Friends.objects.create(first_user=self.user, second_user=recip_user)
+
+        if my_request_to_friend.accepted==1:
+            #Заявка принята, ещё здесь надо отправить сообщение второму пользователю
+            return {
+                'type': 'accepted',
+                'message': "You have accepted the request as a friend"
+            }
+
+
+        other_request_to_friend =  Friends.objects.filter(first_user=recip_user, second_user=self.user)
     @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
@@ -54,6 +80,9 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             message=message
         )
         serializer = DialogSerializer(response, context={'request': self.scope})
+        if response.recipient.pk!=self.user.pk:
+            await channel_layer.group_send(f'recipient_{response.recipient.pk}',
+                                        {"type": "send_message", "data": serializer.data})
 
         return serializer.data, status.HTTP_200_OK
 
@@ -65,20 +94,3 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
                 'action': "receiving_message"
             }
         )
-
-    # @model_observer(Dialog)
-    # async def dialog_activity(self, message, observer=None, **kwargs):
-    #     await self.send_json(message)
-    #
-    # @dialog_activity.groups_for_signal
-    # def dialog_activity(self, instance: Dialog, **kwargs):
-    #     yield f'recipient__{instance.recipient}'
-    #     yield f'pk__{instance.pk}'
-    #
-    # @dialog_activity.groups_for_consumer
-    # def dialog_activity(self):
-    #     yield f'recipient__{self.scope["user"]}'
-    #
-    # @dialog_activity.serializer
-    # def dialog_activity(self, instance: Dialog, action, **kwargs):
-    #     return dict(data=DialogSerializer(instance).data, action=action.value, pk=instance.pk)

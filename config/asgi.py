@@ -20,7 +20,7 @@ from django.core.asgi import get_asgi_application
 
 
 
-from chat import routing
+from . import routing
 from config.middleware import TokenAuthMiddleware
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
