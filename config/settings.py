@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
 ]
 INTERNAL_IPS = ['127.0.0.1', '3.77.55.244']
 
-CSRF_TRUSTED_ORIGINS = ['127.0.0.1', '3.77.55.244']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1/', 'http://3.77.55.244/', 'http://*']
 
 # Application definition
 
