@@ -37,6 +37,8 @@ ALLOWED_HOSTS = [
 ]
 INTERNAL_IPS = ['127.0.0.1', '3.77.55.244']
 
+CSRF_TRUSTED_ORIGINS = ['127.0.0.1', '3.77.55.244']
+
 # Application definition
 
 INSTALLED_APPS = [
