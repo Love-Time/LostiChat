@@ -81,8 +81,8 @@ class DialogApiView(APIView, DialogMessagePagination):
     def get(self, request, pk):
         queryset = Dialog.objects.filter(Q(sender_id=self.request.user.id) & Q(recipient_id=pk) |
                                          Q(sender_id=pk) & Q(recipient_id=self.request.user.id))
-        results = self.paginate_queryset(queryset, request, view=self)
-        serializer = DialogSerializer(results, many=True, context={'request': request})
+        data = self.paginate_queryset(queryset, request, view=self)
+        serializer = DialogSerializer(data, many=True, context={'request': request})
 
 
         return self.get_paginated_response(serializer.data)
