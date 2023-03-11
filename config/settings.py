@@ -121,10 +121,9 @@ CHANNEL_LAYERS = {
 
 
 try:
-    print(1)
-    DATABASES_NAME = os.environ['DATABASE_NAME']
-    DATABASES_USER = os.environ['DATABASE_USER']
-    DATABASES_PASSWORD = os.environ['DATABASE_PASSWORD']
+    DATABASES_NAME = os.environ['DATABASES_NAME']
+    DATABASES_USER = os.environ['DATABASES_USER']
+    DATABASES_PASSWORD = os.environ['DATABASES_PASSWORD']
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -136,14 +135,14 @@ try:
         }
 
     }
-    print(2)
+
 except KeyError as ex:
-    # DATABASES = {
-    #     'default': {
-    #         'ENGINE': 'django.db.backends.sqlite3',
-    #         'NAME': BASE_DIR / 'db.sqlite3',
-    #     }
-    # }
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
     print(ex)
 
 
