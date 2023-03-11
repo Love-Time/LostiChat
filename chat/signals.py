@@ -25,7 +25,7 @@ channel_layer = get_channel_layer()
 @receiver(post_save, sender=Dialog)
 def send_message(sender, instance, created, **kwargs):
     if created:
-        serializer = DialogSerializer(instance, context={'request': {'user': instance.sender}})
+        serializer = DialogSerializer(instance)
         print(serializer.data)
         async_to_sync(channel_layer.group_send)(f'recipient_{instance.recipient.pk}',
                                                 {"type": "send_message", "data": serializer.data})
