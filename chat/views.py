@@ -35,7 +35,7 @@ class DialogMessageLastList(mixins.ListModelMixin,
                                         FROM {Dialog._meta.db_table} \
                                         WHERE sender_id = {self.request.user.id} OR \
                                               recipient_id = {self.request.user.id}\
-                                        GROUP BY sender_id, recipient_id \
+                                        GROUP BY id, sender_id, recipient_id \
                                         ORDER BY time DESC')
         message = list(queryset)
         len_message = len(message)
