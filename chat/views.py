@@ -31,7 +31,7 @@ class DialogMessageLastList(mixins.ListModelMixin,
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = Dialog.objects.raw(f'SELECT id, sender_id, recipient_id, message, max(time) \
+        queryset = Dialog.objects.raw(f'SELECT id, sender_id, recipient_id, max(time) \
                                         FROM {Dialog._meta.db_table} \
                                         WHERE sender_id = {self.request.user.id} OR \
                                               recipient_id = {self.request.user.id}\
