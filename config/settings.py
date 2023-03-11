@@ -121,6 +121,7 @@ CHANNEL_LAYERS = {
 
 
 try:
+    print(1)
     DATABASES_NAME = os.environ['DATABASE_NAME']
     DATABASES_USER = os.environ['DATABASE_USER']
     DATABASES_PASSWORD = os.environ['DATABASE_PASSWORD']
@@ -133,7 +134,9 @@ try:
             "HOST": '127.0.0.1',
             'PORT': '5432'
         }
+
     }
+    print(2)
 except KeyError:
     DATABASES = {
         'default': {
