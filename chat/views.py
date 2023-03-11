@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from .permissions import *
 from .serializers import *
 
@@ -52,7 +53,10 @@ class DialogMessageLastList(mixins.ListModelMixin,
 
         return message
 
-
+class DialogMessagePagination(PageNumberPagination):
+    page_size = 3
+    page_size_query_param = "page_size"
+    max_page_size = 200
 class DialogMessageViewSet(mixins.CreateModelMixin,
                            mixins.RetrieveModelMixin,
                            mixins.UpdateModelMixin,
@@ -61,6 +65,7 @@ class DialogMessageViewSet(mixins.CreateModelMixin,
     serializer_class = DialogSerializer
     queryset = Dialog.objects.all()
     permission_classes = (IsAuthenticated, IsOwner)
+    pagination_class = DialogMessagePagination
 
     def get_queryset(self):
         return Dialog.objects.filter(Q(recipient=self.request.user) | Q(sender=self.request.user))
@@ -71,11 +76,13 @@ class DialogMessageViewSet(mixins.CreateModelMixin,
         return DialogSerializer
 
 
-class DialogApiView(APIView):
+class DialogApiView(APIView, DialogMessagePagination):
+
     def get(self, request, pk):
         queryset = Dialog.objects.filter(Q(sender_id=self.request.user.id) & Q(recipient_id=pk) |
                                          Q(sender_id=pk) & Q(recipient_id=self.request.user.id))
-        serializer = DialogSerializer(queryset, many=True, context={'request': request})
+        results = self.paginate_queryset(queryset, request, view=self)
+        serializer = DialogSerializer(results, many=True, context={'request': request})
 
 
-        return Response(serializer.data)
+        return self.get_paginated_response(serializer.data)

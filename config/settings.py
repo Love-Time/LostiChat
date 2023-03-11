@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+
+
+
 try:
     import setenv
 except ImportError:
@@ -58,6 +61,7 @@ INSTALLED_APPS = [
     'friends',
     'chat',
     'django_cleanup.apps.CleanupConfig',
+    'drf_yasg',
 
 
 ]
@@ -195,6 +199,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
+
+
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
@@ -206,6 +212,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
 
     ),
+
+
+
 
 }
 

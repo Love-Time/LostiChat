@@ -63,7 +63,7 @@ class UserViewSet(DjoserUserViewSet):
         return Response(exist)
 
 
-class UserSimpleList(mixins.ListModelMixin,
+class UserSimpleList(mixins.ListModelMixin, mixins.RetrieveModelMixin,
                      GenericViewSet):
     serializer_class = UserSimpleSerializer
     queryset = User.objects.all()

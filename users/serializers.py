@@ -22,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
             'birth_date',
             'is_block',
             'is_staff',
+            'image',
         )
         read_only_fields = (settings.LOGIN_FIELD, 'is_block','is_staff')
 
@@ -48,7 +49,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = tuple(CustomUser.REQUIRED_FIELDS) + (
             settings.LOGIN_FIELD,
             settings.USER_ID_FIELD,
-            "password", 'first_name', 'last_name', 'gender', 'birth_date', 'code'
+            "password", 'first_name', 'last_name', 'gender', 'birth_date', 'code', 'image'
         )
 
     def validate(self, attrs):
