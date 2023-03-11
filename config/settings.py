@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bf5g9=54fej+=3^rh0&eany+jpx-l&4svihm+br9emx57!jx!z'
+SECRET_KEY = os.environ.get("SECRET_KEY",'django-insecure-bf5g9=54fej+=3^rh0&eany+jpx-l&4svihm+br9emx57!jx!z')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -119,26 +119,29 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
-# DATABASES_NAME = os.environ['DATABASE_NAME']
-# DATABASES_USER = os.environ['DATABASE_USER']
-# DATABASES_PASSWORD = os.environ['DATABASE_PASSWORD']
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': DATABASES_NAME,
-#         'USER': DATABASES_USER,
-#         "PASSWORD": DATABASES_PASSWORD,
-#         "HOST": '127.0.0.1',
-#         'PORT': '5432'
-#     }
-# }
+try:
+    DATABASES_NAME = os.environ['DATABASE_NAME']
+    DATABASES_USER = os.environ['DATABASE_USER']
+    DATABASES_PASSWORD = os.environ['DATABASE_PASSWORD']
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': DATABASES_NAME,
+            'USER': DATABASES_USER,
+            "PASSWORD": DATABASES_PASSWORD,
+            "HOST": '127.0.0.1',
+            'PORT': '5432'
+        }
+    }
+except KeyError:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 
 # Password validation
