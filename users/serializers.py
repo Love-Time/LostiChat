@@ -11,7 +11,11 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(use_url=False)
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        if obj.image:
+            return obj.image.url
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
@@ -40,7 +44,11 @@ class UserSerializer(serializers.ModelSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={"input_type": "password"}, write_only=True)
     code = serializers.CharField(read_only=True)
-    image = serializers.ImageField(use_url=False)
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        if obj.image:
+            return obj.image.url
 
     default_error_messages = {
         "cannot_create_user": settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR
