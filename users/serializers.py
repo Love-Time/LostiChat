@@ -92,7 +92,11 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ['auth_token', 'user']
 
 class UserSimpleSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(use_url=False)
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        if obj.image:
+            return obj.image.url
     class Meta:
         model = User
         fields = ['pk', 'first_name', 'last_name', 'image']
