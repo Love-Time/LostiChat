@@ -53,7 +53,8 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             recipient=recip,
             message=message
         )
-        serializer = DialogSerializer(response)
+        self.get_serializer(response)
+        serializer = self.get_serializer(response)
 
         return serializer.data, status.HTTP_200_OK
 
