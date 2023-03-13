@@ -49,8 +49,9 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     @staticmethod
     def retry(func):
         async def _wrapper(*args, **kwargs):
-            await func(*args, **kwargs)
-            print(3233)
+            print(11111)
+            return await func(*args, **kwargs)
+
 
         return _wrapper
 
