@@ -60,6 +60,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             data = await self.create_dialog_message(message=self.queue[0][2]['message'], recipient=self.queue[0][2]['recipient'], request_id=self.queue[0][2]['request_id'], action=self.queue[0][2]['action'])
             async_to_sync(channel_layer.group_send)(f'recipient_{data.sender.pk}',
                                                     {"type": "send_message", "data": data})
+            print(data)
         self.__start =  False
     @staticmethod
     def retry(func):
