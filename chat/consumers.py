@@ -63,16 +63,17 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             await channel_layer.group_send(f'recipient_{instance.sender.pk}',
                                                     {"type": "send_message", "data": data})
             del self.queue[0]
+            print("СПАТЬ")
             time.sleep(5)
 
-
-        self.__start =  False
+        self.__start = False
     @staticmethod
     def retry(func):
         async def _wrapper(self, *args, **kwargs):
 
             self.queue.append((func, args, kwargs))
             if not self.__start:
+                print('startuem')
                 await self.start_queue()
 
 
@@ -82,7 +83,6 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     @action()
     @retry
     async def create_dialog_message(self, message, recipient, **kwargs):
-        print('i am here')
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
 
         response = await database_sync_to_async(Dialog.objects.create)(
@@ -93,6 +93,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         serializer = DialogSerializer(response)
 
         return serializer.data, status.HTTP_201_CREATED
+
     async def create_dialog_message2(self, message, recipient, **kwargs):
         print('i am here2')
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
