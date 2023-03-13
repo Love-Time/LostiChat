@@ -56,16 +56,15 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     def start_queue(self):
         self.__start = True
         while self.queue:
-            print(self.queue[0])
-            return 1
+            yield self.queue[0][0](**self.queue[0][1], **self.queue[0][2])
         self.__start =  False
     @staticmethod
     def retry(func):
         async def _wrapper(self, *args, **kwargs):
 
-            #self.queue.append((func, args, kwargs))
+            self.queue.append((func, args, kwargs))
             if not self.__start:
-                yield
+                return self.start_queue()
 
 
         return _wrapper
