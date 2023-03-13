@@ -75,7 +75,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             if not self.__start:
                 print('startuem', self)
                 print("ПОЧЕМУ", self.__start)
-                await self.start_queue()
+                await asyncio.run(self.start_queue())
 
 
         return _wrapper
