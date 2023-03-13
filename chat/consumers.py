@@ -21,6 +21,13 @@ channel_layer = get_channel_layer()
 User = get_user_model()
 
 
+def retry(func):
+    async def _wrapper(self, *args, **kwargs):
+        self.queue.append((func, args, kwargs))
+        if not self.__start:
+            yield
+
+    return _wrapper
 class DialogMessageConsumer(mixins.CreateModelMixin,
                             ObserverModelInstanceMixin,
                             GenericAsyncAPIConsumer):
