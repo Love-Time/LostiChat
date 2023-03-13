@@ -34,6 +34,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             await self.channel_layer.group_add(f'recipient_{self.scope["user"].id}', self.channel_name)
             await self.accept()
             self.queue = []
+            self.__start = False
         else:
             await self.close(code=401)
 
@@ -45,12 +46,18 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         )
         await super().disconnect(code)
 
+    def start_queue(self):
+        self.__start = True
+        while self.queue:
+            yield self.queue[0][0](**self.queue[0][1], **self.queue[0][2])
+        self.__start =  False
 
-    @staticmethod
-    def retry(func):
+    def retry(self, func):
         async def _wrapper(*args, **kwargs):
-            print(11111)
-            return await func(*args, **kwargs)
+
+            self.queue.append((func, args, kwargs))
+            if not self.__start:
+                yield
 
 
         return _wrapper
@@ -60,7 +67,6 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     @retry
     async def create_dialog_message(self, message, recipient, **kwargs):
         self.queue.append(('create_dialog_message', (kwargs,)))
-        print(self.queue)
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
 
         response = await database_sync_to_async(Dialog.objects.create)(
