@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from asgiref.sync import sync_to_async, async_to_sync
@@ -56,10 +57,12 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     async def start_queue(self):
         self.__start = True
         while self.queue:
-            print(self.queue[0][2])
+
             instance, data = await self.create_dialog_message2(message=self.queue[0][2]['message'], recipient=self.queue[0][2]['recipient'], request_id=self.queue[0][2]['request_id'], action=self.queue[0][2]['action'])
             await channel_layer.group_send(f'recipient_{instance.sender.pk}',
                                                     {"type": "send_message", "data": data})
+            del self.queue[0]
+            await asyncio.sleep(5)
 
             break
         self.__start =  False
