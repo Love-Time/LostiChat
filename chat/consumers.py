@@ -23,13 +23,7 @@ channel_layer = get_channel_layer()
 User = get_user_model()
 
 
-def retry(func):
-    async def _wrapper(self, *args, **kwargs):
-        self.queue.append((func, args, kwargs))
-        if not self.__start:
-            yield
 
-    return _wrapper
 class DialogMessageConsumer(mixins.CreateModelMixin,
                             ObserverModelInstanceMixin,
                             GenericAsyncAPIConsumer):
@@ -55,43 +49,9 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         )
         await super().disconnect(code)
 
-    async def start_queue(self):
-        self.__start = True
-        while self.queue:
-            print(self.queue)
-            instance, data = await self.create_dialog_message2(message=self.queue[0][1]['message'], recipient=self.queue[0][1]['recipient'], request_id=self.queue[0][1]['request_id'], action=self.queue[0][1]['action'])
-            await channel_layer.group_send(f'recipient_{instance.sender.pk}',
-                                                    {"type": "send_message", "data": data})
-            del self.queue[0]
-            print("СПАТЬ")
-            await asyncio.sleep(5)
-        print('закончили')
-
-    @staticmethod
-    def retry(func):
-        async def _wrapper(self, *args, **kwargs):
-
-            self.queue.append((func, args, kwargs))
-            if not self.__start:
-                print('startuem', self)
-                print("ПОЧЕМУ", self.__start)
-                await asyncio.run(self.start_queue())
-
-
-        return _wrapper
-
 
     @action()
-    async def create_dialog_message(self, **kwargs):
-        print("helllllllllllllllll")
-        self.queue.append((self.create_dialog_message, kwargs))
-        if not self.__start:
-            print('startuem', self)
-            print("ПОЧЕМУ", self.__start)
-            await self.start_queue()
-
-    async def create_dialog_message2(self, message, recipient, **kwargs):
-        print('i am here2')
+    async def create_dialog_message(self, message, recipient, **kwargs):
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
 
         response = await database_sync_to_async(Dialog.objects.create)(
@@ -101,7 +61,9 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         )
         serializer = DialogSerializer(response)
 
-        return response, serializer.data
+        return serializer.data, status.HTTP_201_CREATED
+
+
 
     async def send_message(self, event):
         await self.send_json(
