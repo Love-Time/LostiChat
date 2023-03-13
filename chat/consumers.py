@@ -64,7 +64,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             del self.queue[0]
             await asyncio.sleep(5)
 
-            break
+
         self.__start =  False
     @staticmethod
     def retry(func):
