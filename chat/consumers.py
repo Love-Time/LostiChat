@@ -82,18 +82,13 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
 
     @action()
-    @retry
-    async def create_dialog_message(self, message, recipient, **kwargs):
-        recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
-
-        response = await database_sync_to_async(Dialog.objects.create)(
-            sender=self.scope["user"],
-            recipient=recip,
-            message=message
-        )
-        serializer = DialogSerializer(response)
-
-        return serializer.data, status.HTTP_201_CREATED
+    async def create_dialog_message(self, **kwargs):
+        s
+        self.queue.append((self.create_dialog_message, kwargs))
+        if not self.__start:
+            print('startuem', self)
+            print("ПОЧЕМУ", self.__start)
+            await self.start_queue()
 
     async def create_dialog_message2(self, message, recipient, **kwargs):
         print('i am here2')
