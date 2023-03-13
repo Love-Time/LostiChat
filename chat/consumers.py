@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 
 from asgiref.sync import sync_to_async, async_to_sync
 from channels.db import database_sync_to_async
@@ -62,7 +63,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             await channel_layer.group_send(f'recipient_{instance.sender.pk}',
                                                     {"type": "send_message", "data": data})
             del self.queue[0]
-            await asyncio.sleep(5)
+            time.sleep(5)
 
 
         self.__start =  False
