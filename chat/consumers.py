@@ -58,7 +58,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         while self.queue:
             print(self.queue[0][2])
             instance, data = await self.create_dialog_message2(message=self.queue[0][2]['message'], recipient=self.queue[0][2]['recipient'], request_id=self.queue[0][2]['request_id'], action=self.queue[0][2]['action'])
-            async_to_sync(channel_layer.group_send)(f'recipient_{instance.sender.pk}',
+            await channel_layer.group_send(f'recipient_{instance.sender.pk}',
                                                     {"type": "send_message", "data": data})
 
             break
