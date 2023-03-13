@@ -83,7 +83,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
     @action()
     async def create_dialog_message(self, **kwargs):
-        s
+        print("helllllllllllllllll")
         self.queue.append((self.create_dialog_message, kwargs))
         if not self.__start:
             print('startuem', self)
