@@ -57,7 +57,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         self.__start = True
         while self.queue:
             print(self.queue[0])
-            yield self.queue[0][0](**self.queue[0][1], **self.queue[0][2])
+            return 1
         self.__start =  False
     @staticmethod
     def retry(func):
