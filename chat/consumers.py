@@ -57,8 +57,8 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         self.__start = True
         while self.queue:
             print(self.queue[0][2])
-            data = await self.create_dialog_message2(message=self.queue[0][2]['message'], recipient=self.queue[0][2]['recipient'], request_id=self.queue[0][2]['request_id'], action=self.queue[0][2]['action'])
-            async_to_sync(channel_layer.group_send)(f'recipient_{data.sender.pk}',
+            instance, data = await self.create_dialog_message2(message=self.queue[0][2]['message'], recipient=self.queue[0][2]['recipient'], request_id=self.queue[0][2]['request_id'], action=self.queue[0][2]['action'])
+            async_to_sync(channel_layer.group_send)(f'recipient_{instance.sender.pk}',
                                                     {"type": "send_message", "data": data})
 
             break
@@ -100,7 +100,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         )
         serializer = DialogSerializer(response)
 
-        return serializer.data
+        return response, serializer.data
 
     async def send_message(self, event):
         await self.send_json(
