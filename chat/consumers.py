@@ -56,7 +56,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     def start_queue(self):
         self.__start = True
         while self.queue:
-            print(self.queue[0][1], **self.queue[0][2])
+            print(self.queue[0][1], self.queue[0][2])
             data, status = self.queue[0][0](**self.queue[0][1], **self.queue[0][2])
             async_to_sync(channel_layer.group_send)(f'recipient_{data.sender.pk}',
                                                     {"type": "send_message", "data": data})
