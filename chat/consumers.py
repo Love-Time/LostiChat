@@ -47,7 +47,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
     @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
-        self.queue.append(('create_dialog_message', (self, message, recipient, kwargs)))
+        self.queue.append(('create_dialog_message', (kwargs,)))
         print(self.queue)
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
 
