@@ -80,7 +80,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         )
         serializer = DialogSerializer(response)
 
-        return serializer.data, status.HTTP_201_CREATED
+        return response, serializer.data
 
 
     async def send_message(self, event):
