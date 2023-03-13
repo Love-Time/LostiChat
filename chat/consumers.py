@@ -64,7 +64,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
                                                     {"type": "send_message", "data": data})
             del self.queue[0]
             print("СПАТЬ")
-            time.sleep(5)
+            await asyncio.sleep(5)
         print('закончили')
         self.__start = False
     @staticmethod
