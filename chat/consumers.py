@@ -49,9 +49,21 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         )
         await super().disconnect(code)
 
+    async def do_queue(self):
+        self.__start = True
+        print(111)
+        await asyncio.sleep(10)
+        print(2)
 
     @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
+        self.queue.append((self.create_dialog_message, kwargs))
+        print('start')
+
+        if not self.__start:
+            asyncio.create_task(self.do_queue())
+
+    async def create_dialog_message2(self, message, recipient, **kwargs):
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
 
         response = await database_sync_to_async(Dialog.objects.create)(
@@ -62,7 +74,6 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         serializer = DialogSerializer(response)
 
         return serializer.data, status.HTTP_201_CREATED
-
 
 
     async def send_message(self, event):
