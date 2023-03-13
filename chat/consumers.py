@@ -65,7 +65,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             del self.queue[0]
             print("СПАТЬ")
             time.sleep(5)
-
+        print('закончили')
         self.__start = False
     @staticmethod
     def retry(func):
