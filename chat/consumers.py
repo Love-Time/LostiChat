@@ -74,7 +74,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             self.queue.append((func, args, kwargs))
             if not self.__start:
                 print('startuem', self)
-                await self.start_queue()
+                self.start_queue()
 
 
         return _wrapper
