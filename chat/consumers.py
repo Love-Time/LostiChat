@@ -66,7 +66,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             print("СПАТЬ")
             await asyncio.sleep(5)
         print('закончили')
-        self.__start = False
+
     @staticmethod
     def retry(func):
         async def _wrapper(self, *args, **kwargs):
