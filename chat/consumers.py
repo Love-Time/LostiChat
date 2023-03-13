@@ -52,8 +52,9 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             print(3233)
 
         return _wrapper
-    @action()
+
     @retry
+    @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
         self.queue.append(('create_dialog_message', (kwargs,)))
         print(self.queue)
