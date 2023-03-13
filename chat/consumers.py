@@ -61,6 +61,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
                                                     {"type": "send_message", "data": data})
             del self.queue[0]
             await asyncio.sleep(3)
+        self.__start = False
 
     @action()
     async def create_dialog_message(self, **kwargs):
