@@ -33,6 +33,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         if self.scope['user'] != AnonymousUser():
             await self.channel_layer.group_add(f'recipient_{self.scope["user"].id}', self.channel_name)
             await self.accept()
+            self.queue = []
         else:
             await self.close(code=401)
 
@@ -46,6 +47,8 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
     @action()
     async def create_dialog_message(self, message, recipient, **kwargs):
+        self.queue.append(('create_dialog_message', (self, message, recipient, kwargs)))
+        print(self.queue)
         recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
 
         response = await database_sync_to_async(Dialog.objects.create)(
