@@ -94,11 +94,11 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
         return serializer.data, status.HTTP_201_CREATED
 
-    async def create_dialog_message2(self, message, recipient, **kwargs):
+    def create_dialog_message2(self, message, recipient, **kwargs):
         print('i am here2')
-        recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
+        recip = get_object_or_404(User, pk=recipient)
 
-        response = await database_sync_to_async(Dialog.objects.create)(
+        response = Dialog.objects.create(
             sender=self.scope["user"],
             recipient=recip,
             message=message
