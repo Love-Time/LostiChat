@@ -59,7 +59,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         self.__start = True
         while self.queue:
             print(self.queue)
-            instance, data = sync_to_async(self.create_dialog_message2)(message=self.queue[0][2]['message'], recipient=self.queue[0][2]['recipient'], request_id=self.queue[0][2]['request_id'], action=self.queue[0][2]['action'])
+            instance, data = async_to_sync(self.create_dialog_message2)(message=self.queue[0][2]['message'], recipient=self.queue[0][2]['recipient'], request_id=self.queue[0][2]['request_id'], action=self.queue[0][2]['action'])
             async_to_sync(channel_layer.group_send)(f'recipient_{instance.sender.pk}',
                                                     {"type": "send_message", "data": data})
             del self.queue[0]
@@ -74,7 +74,8 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             self.queue.append((func, args, kwargs))
             if not self.__start:
                 print('startuem', self)
-                self.start_queue()
+                print("ПОЧЕМУ", self.__start)
+                await self.start_queue()
 
 
         return _wrapper
@@ -94,11 +95,11 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def create_dialog_message2(self, message, recipient, **kwargs):
+    async def create_dialog_message2(self, message, recipient, **kwargs):
         print('i am here2')
-        recip = get_object_or_404(User, pk=recipient)
+        recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
 
-        response = Dialog.objects.create(
+        response = await database_sync_to_async(Dialog.objects.create)(
             sender=self.scope["user"],
             recipient=recip,
             message=message
