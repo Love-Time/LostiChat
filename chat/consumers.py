@@ -56,6 +56,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     def start_queue(self):
         self.__start = True
         while self.queue:
+            print(self.queue[0])
             yield self.queue[0][0](**self.queue[0][1], **self.queue[0][2])
         self.__start =  False
     @staticmethod
