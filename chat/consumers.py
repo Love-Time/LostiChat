@@ -55,12 +55,12 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         )
         await super().disconnect(code)
 
-    def start_queue(self):
+    async def start_queue(self):
         self.__start = True
         while self.queue:
             print(self.queue)
-            instance, data = async_to_sync(self.create_dialog_message2)(message=self.queue[0][2]['message'], recipient=self.queue[0][2]['recipient'], request_id=self.queue[0][2]['request_id'], action=self.queue[0][2]['action'])
-            async_to_sync(channel_layer.group_send)(f'recipient_{instance.sender.pk}',
+            instance, data = await self.create_dialog_message2(message=self.queue[0][2]['message'], recipient=self.queue[0][2]['recipient'], request_id=self.queue[0][2]['request_id'], action=self.queue[0][2]['action'])
+            await channel_layer.group_send(f'recipient_{instance.sender.pk}',
                                                     {"type": "send_message", "data": data})
             del self.queue[0]
             print("СПАТЬ")
