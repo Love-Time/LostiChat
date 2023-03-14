@@ -60,7 +60,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = tuple(CustomUser.REQUIRED_FIELDS) + (
             settings.LOGIN_FIELD,
             settings.USER_ID_FIELD,
-            "password", 'first_name', 'last_name', 'gender', 'birth_date', 'code', 'image', 'Image',
+            "password", 'first_name', 'last_name', 'gender', 'birth_date', 'code', 'image', 'img',
         )
 
     def validate(self, attrs):
