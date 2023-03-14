@@ -1,5 +1,6 @@
 import asyncio
 import json
+import socket
 import time
 
 from asgiref.sync import sync_to_async, async_to_sync
@@ -33,6 +34,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
     async def connect(self):
         self.user = self.scope['user']
+        print(socket.gethostname(), 'socket hostname')
         if self.scope['user'] != AnonymousUser():
             await self.channel_layer.group_add(f'recipient_{self.scope["user"].id}', self.channel_name)
             await self.accept()
