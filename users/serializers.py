@@ -45,6 +45,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={"input_type": "password"}, write_only=True)
     code = serializers.CharField(read_only=True)
     image = serializers.SerializerMethodField()
+    img = serializers.ImageField(source='image', write_only=True)
 
     def get_image(self, obj):
         if obj.image:
@@ -59,7 +60,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = tuple(CustomUser.REQUIRED_FIELDS) + (
             settings.LOGIN_FIELD,
             settings.USER_ID_FIELD,
-            "password", 'first_name', 'last_name', 'gender', 'birth_date', 'code', 'image'
+            "password", 'first_name', 'last_name', 'gender', 'birth_date', 'code', 'image', 'Image',
         )
 
     def validate(self, attrs):
