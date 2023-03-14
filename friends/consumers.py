@@ -32,9 +32,10 @@ class FriendConsumer(ObserverModelInstanceMixin,
 
     async def connect(self):
         self.user = self.scope['user']
+        print(socket.gethostname(), 'socket hostname')
         if self.scope['user'] != AnonymousUser():
             await self.channel_layer.group_add(f'friend_{self.scope["user"].id}', self.channel_name)
-            print(socket.gethostname(), 'socket hostname')
+
             await self.accept()
         else:
             await self.close(code=401)
