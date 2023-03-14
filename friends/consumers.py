@@ -21,6 +21,7 @@ from .serializers import FriendSerializer
 
 channel_layer = get_channel_layer()
 User = get_user_model()
+import socket
 
 
 class FriendConsumer(ObserverModelInstanceMixin,
@@ -33,9 +34,11 @@ class FriendConsumer(ObserverModelInstanceMixin,
         self.user = self.scope['user']
         if self.scope['user'] != AnonymousUser():
             await self.channel_layer.group_add(f'friend_{self.scope["user"].id}', self.channel_name)
+            print(socket.gethostname(), 'socket hostname')
             await self.accept()
         else:
             await self.close(code=401)
+
 
 
     async def disconnect(self, code):
@@ -67,6 +70,7 @@ class FriendConsumer(ObserverModelInstanceMixin,
                 'type': 'accepted',
                 'message': "You have accepted the request as a friend"
             }
+
 
 
         other_request_to_friend =  Friends.objects.filter(first_user=recip_user, second_user=self.user)
