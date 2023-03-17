@@ -37,6 +37,7 @@ class Dialog(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_duo')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipient_duo')
     message = models.TextField()
+    read = models.BooleanField(default=0)
     time = models.DateTimeField(auto_now_add=True)
     class Meta:
         ordering = ('-time',)
