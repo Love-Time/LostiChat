@@ -99,7 +99,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             {
                 'data': event['data'],
                 'status': status.HTTP_200_OK,
-                'action': "receiving_message"
+                'action': "friend"
             }
         )
 
