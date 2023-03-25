@@ -99,3 +99,12 @@ class FriendConsumer(ObserverModelInstanceMixin,
                 'action': "receiving_message"
             }
         )
+
+    async def send_friend(self, event):
+        await self.send_json(
+            {
+                'data': event['data'],
+                'status': status.HTTP_200_OK,
+                'action': "friend"
+            }
+        )
