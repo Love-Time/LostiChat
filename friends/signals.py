@@ -40,7 +40,7 @@ def create_user_channel(sender, instance: Friends, created, **kwargs):
 
 
 @receiver(pre_delete, sender=Friends)
-def create_user_channel(sender, instance: Friends, created, **kwargs):
+def create_user_channel(sender, instance: Friends, **kwargs):
     another_request = Friends.objects.filter(first_user=instance.second_user, second_user=instance.first_user)
     serializer = UserSimpleSerializer(instance.first_user)
     if not another_request and instance.accepted == 0:
