@@ -94,6 +94,16 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             }
         )
 
+    async def send_friend(self, event):
+        await self.send_json(
+            {
+                'data': event['data'],
+                'status': status.HTTP_200_OK,
+                'action': "receiving_message"
+            }
+        )
+
+
     # @model_observer(Dialog)
     # async def dialog_activity(self, message, observer=None, **kwargs):
     #     await self.send_json(message)
