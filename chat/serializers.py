@@ -50,8 +50,7 @@ class DialogSerializer(serializers.ModelSerializer):
         exclude = ['recipient']
 
 class DialogCreateSerializer(serializers.ModelSerializer):
-    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    send = UserSimpleSerializer(source='sender', read_only=True)
+    sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     def validate(self, data):
         if data.get('answer', ""):

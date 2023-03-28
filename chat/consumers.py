@@ -61,8 +61,8 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
                                                                         recipient=self.queue[0][1]['recipient'],
                                                                         request_id=self.queue[0][1]['request_id'],
                                                                         action=self.queue[0][1]['action'])
-            await channel_layer.group_send(f'recipient_{instance.sender.pk}',
-                                                    {"type": "send_message", "data": data})
+            await channel_layer.group_send(f'recipient_{instance["sender"]["pk"]}',
+                                                    {"type": "send_message", "data": instance})
             del self.queue[0]
             await asyncio.sleep(3)
         self.__start = False
