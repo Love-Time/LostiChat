@@ -11,7 +11,7 @@ from rest_framework.viewsets import GenericViewSet
 from .models import Friends
 from .permissions import IsOwner, IsFriend
 from .serializers import FriendSerializer, FriendCreateSerializer, FriendRequestSerializer, PossibleFriendsSerializer
-
+from django.contrib.auth.models import AnonymousUser
 User = get_user_model()
 
 
@@ -90,6 +90,13 @@ class FriendViewSet(mixins.CreateModelMixin,
         serializer = PossibleFriendsSerializer(possible_friends, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['get'])
+    def is_friend(self, request, second_user=None):
+        if request.user == AnonymousUser():
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        friend = Friends.objects.filter(first_user=request.user, second_user_id=second_user, accepted=1)
+
+        return Response({'is_friend': bool(friend)}, status=status.HTTP_200_OK)
     # @action(detail=False, methods=['get'])
     # def possible_friends(self, request):
     #     me_friends = list(Friends.objects.filter(Q(first_user=self.request.user) & Q(accepted=1)))
