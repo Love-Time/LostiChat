@@ -28,9 +28,9 @@ class myRequest():
         self.user = user
 
 def serial(serializer):
-    if serializer.is_valid():
-        serializer.save()
-        return serializer.validated_data
+    serializer.is_valid(raise_exception=True)
+    self.perform_create(serializer, **kwargs)
+    return serializer.data, status.HTTP_201_CREATED
 
 class DialogMessageConsumer(mixins.CreateModelMixin,
                             ObserverModelInstanceMixin,
@@ -79,13 +79,15 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         if not self.__start:
             asyncio.create_task(self.do_queue())
 
-    async def create_dialog_message2(self, **kwargs):
+    def create_dialog_message2(self, **kwargs):
         #recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
+
         serializer = DialogCreateSerializer(data=kwargs, context= {'request': myRequest(self.scope['user'])})
-        data = await sync_to_async(serial)(serializer)
-        if data:
-            return data, status.HTTP_200_OK
-        return "Не вышло", "не фартануло"
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer, **kwargs)
+        return serializer.data, status.HTTP_201_CREATED
+
+
 
 
     async def send_message(self, event):
