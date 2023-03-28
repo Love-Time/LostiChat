@@ -23,6 +23,9 @@ from django.contrib.auth.models import AnonymousUser
 channel_layer = get_channel_layer()
 User = get_user_model()
 
+class myRequest():
+    def __init__(self, user):
+        self.user = user
 
 
 class DialogMessageConsumer(mixins.CreateModelMixin,
@@ -74,7 +77,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
     async def create_dialog_message2(self, **kwargs):
         #recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
-        serializer = DialogCreateSerializer(kwargs)
+        serializer = DialogCreateSerializer(data=kwargs, context= {'request': myRequest(self.scope['user'])})
         if serializer.is_valid():
             serializer.save()
             return serializer.validated_data
