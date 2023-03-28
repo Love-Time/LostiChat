@@ -53,7 +53,7 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     def validate(self, data):
-        if data['answer']:
+        if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
                 raise ValidationError("Наебать не получится, выбери сообщение из своего чата")
 
