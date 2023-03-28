@@ -61,7 +61,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         self.__start = True
         while self.queue:
             print(self.queue[0])
-            instance, data = await self.create_dialog_message2(message=self.queue[0][1]['message'],
+            instance, data = sync_to_async(self.create_dialog_message2)(message=self.queue[0][1]['message'],
                                                                         recipient=self.queue[0][1]['recipient'],
                                                                         request_id=self.queue[0][1]['request_id'],
                                                                         action=self.queue[0][1]['action'])
