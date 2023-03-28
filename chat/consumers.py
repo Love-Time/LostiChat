@@ -74,9 +74,11 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
 
     async def create_dialog_message2(self, **kwargs):
         #recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
-        response = DialogCreateSerializer(**kwargs)
-        serializer = DialogSerializer(response.data)
-        return response, serializer.data
+        serializer = DialogCreateSerializer(kwargs)
+        if serializer.is_valid():
+            serializer.save()
+            return serializer.validated_data
+        return "Не вышло"
 
 
     async def send_message(self, event):
