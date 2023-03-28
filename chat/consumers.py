@@ -82,8 +82,10 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     async def create_dialog_message2(self, **kwargs):
         #recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
         serializer = DialogCreateSerializer(data=kwargs, context= {'request': myRequest(self.scope['user'])})
-        sync_to_async(serial)(serializer)
-        return "Не вышло"
+        data = await sync_to_async(serial)(serializer)
+        if data:
+            return data, status.HTTP_200_OK
+        return "Не вышло", "не фартануло"
 
 
     async def send_message(self, event):
