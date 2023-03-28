@@ -27,6 +27,10 @@ class myRequest():
     def __init__(self, user):
         self.user = user
 
+def serial(serializer):
+    if serializer.is_valid():
+        serializer.save()
+        return serializer.validated_data
 
 class DialogMessageConsumer(mixins.CreateModelMixin,
                             ObserverModelInstanceMixin,
@@ -78,9 +82,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     async def create_dialog_message2(self, **kwargs):
         #recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
         serializer = DialogCreateSerializer(data=kwargs, context= {'request': myRequest(self.scope['user'])})
-        if sync_to_async(serializer.is_valid)():
-            serializer.save()
-            return serializer.validated_data
+        sync_to_async(serial)(serializer)
         return "Не вышло"
 
 
