@@ -27,16 +27,12 @@ class myRequest():
     def __init__(self, user):
         self.user = user
 
-def serial(serializer):
-    serializer.is_valid(raise_exception=True)
-    self.perform_create(serializer, **kwargs)
-    return serializer.data, status.HTTP_201_CREATED
 
 class DialogMessageConsumer(mixins.CreateModelMixin,
                             ObserverModelInstanceMixin,
                             GenericAsyncAPIConsumer):
     queryset = Dialog.objects.all()
-    serializer_class = DialogSerializer
+    serializer_class = DialogCreateSerializer
     lookup_field = "recipient"
 
     async def connect(self):
@@ -61,7 +57,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         self.__start = True
         while self.queue:
             print(self.queue[0])
-            instance, data = sync_to_async(self.create_dialog_message2)(message=self.queue[0][1]['message'],
+            instance, data = await sync_to_async(self.create_dialog_message2)(message=self.queue[0][1]['message'],
                                                                         recipient=self.queue[0][1]['recipient'],
                                                                         request_id=self.queue[0][1]['request_id'],
                                                                         action=self.queue[0][1]['action'])
