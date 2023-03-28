@@ -95,8 +95,8 @@ class FriendViewSet(mixins.CreateModelMixin,
         if request.user == AnonymousUser():
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         friend = Friends.objects.filter(first_user=request.user, second_user_id=second_user, accepted=1)
-
         return Response({'is_friend': bool(friend)}, status=status.HTTP_200_OK)
+
     # @action(detail=False, methods=['get'])
     # def possible_friends(self, request):
     #     me_friends = list(Friends.objects.filter(Q(first_user=self.request.user) & Q(accepted=1)))

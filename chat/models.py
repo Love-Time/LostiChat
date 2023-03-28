@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 
 # Create your models here.
@@ -39,6 +40,15 @@ class Dialog(models.Model):
     message = models.TextField()
     read = models.BooleanField(default=0)
     time = models.DateTimeField(auto_now_add=True)
+
+    answer = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    forward = models.ManyToManyField('self', null=True, blank=True)
+
+    def clean(self):
+        if self.answer and self.forward:
+            raise ValidationError("Так делать нельзя, либо пересылай сообщения, либо отвечай")
+        super().clean()
+
     class Meta:
         ordering = ('-time',)
 

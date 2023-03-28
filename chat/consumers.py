@@ -14,7 +14,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from .models import Dialog
-from .serializers import DialogSerializer
+from .serializers import DialogSerializer, DialogCreateSerializer
 from djangochannelsrestframework.observer.generics import (ObserverModelInstanceMixin, action)
 from rest_framework.permissions import IsAuthenticated
 from channels.layers import get_channel_layer
@@ -72,16 +72,10 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         if not self.__start:
             asyncio.create_task(self.do_queue())
 
-    async def create_dialog_message2(self, message, recipient, **kwargs):
-        recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
-
-        response = await database_sync_to_async(Dialog.objects.create)(
-            sender=self.scope["user"],
-            recipient=recip,
-            message=message
-        )
-        serializer = DialogSerializer(response)
-
+    async def create_dialog_message2(self, **kwargs):
+        #recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
+        response = DialogCreateSerializer(**kwargs)
+        serializer = DialogSerializer(response.data)
         return response, serializer.data
 
 

@@ -3,6 +3,7 @@ from rest_framework import serializers
 from users.serializers import UserSimpleSerializer
 from .models import *
 from django.contrib.auth import get_user_model
+from rest_framework.exceptions import ValidationError
 User = get_user_model()
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -16,9 +17,21 @@ class ConversationSerializer(serializers.ModelSerializer):
         model = Conversation
         exclude = ['messages']
         read_only_fields = ['type']
+
+
+class AnswerDialogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dialog
+        exclude = ['answer', 'forward']
+
+class ForwardDialogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dialog
+        exclude = ['recipient', 'answer']
 class DialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(read_only=True)
     recip = UserSimpleSerializer(source='recipient', read_only=True)
+    answer = AnswerDialogSerializer()
 
 
     def is_type_user(self, message):
@@ -37,8 +50,14 @@ class DialogSerializer(serializers.ModelSerializer):
         exclude = ['recipient']
 
 class DialogCreateSerializer(serializers.ModelSerializer):
-    sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
+    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
+    def validate(self, data):
+        if data['answer']:
+            if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
+                raise ValidationError("Наебать не получится, выбери сообщение из своего чата")
+
+        return data
     class Meta:
         model = Dialog
         fields = "__all__"
