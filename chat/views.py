@@ -77,7 +77,7 @@ class DialogMessageViewSet(mixins.CreateModelMixin,
 
 
 class DialogApiView(APIView, DialogMessagePagination):
-
+    permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         queryset = Dialog.objects.filter(Q(sender_id=self.request.user.id) & Q(recipient_id=pk) |
                                          Q(sender_id=pk) & Q(recipient_id=self.request.user.id))
