@@ -36,11 +36,12 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     '192.168.1.35',
     "192.168.1.36",
-    '3.77.55.244'
+    '3.77.55.244',
+    'losti.ru'
 ]
-INTERNAL_IPS = ['127.0.0.1', '3.77.55.244']
+INTERNAL_IPS = ['127.0.0.1', 'losti.ru']
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1/', 'http://3.77.55.244/', 'http://*', 'http://3.77.55.244:8001']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1/', 'http://3.77.55.244/', 'https://*', 'https://losti.ru:8432']
 
 # Application definition
 
