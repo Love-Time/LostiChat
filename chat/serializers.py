@@ -30,6 +30,9 @@ class ForwardDialogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dialog
         exclude = ['recipient', 'answer']
+
+
+
 class DialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(read_only=True)
     recip = UserSimpleSerializer(source='recipient', read_only=True)
@@ -52,6 +55,7 @@ class DialogSerializer(serializers.ModelSerializer):
         model = Dialog
         exclude = ['recipient']
 
+ForwardDialogSerializer.forward = ForwardDialogSerializer(many=True)
 class DialogCreateSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
