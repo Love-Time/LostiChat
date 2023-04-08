@@ -33,6 +33,9 @@ class Message(models.Model):
                 fields=['sender', 'conversation'], name='unique_migrationMessage_sender_conversation'
             )
         ]
+class Forward(models.Model):
+    this_message = models.ForeignKey("Dialog", on_delete=models.CASCADE, related_name='this_message')
+    other_message = models.ForeignKey("Dialog", on_delete=models.CASCADE, related_name='other_messages')
 
 class Dialog(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_duo')
@@ -42,7 +45,7 @@ class Dialog(models.Model):
     time = models.DateTimeField(auto_now_add=True)
 
     answer = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
-    forward = models.ManyToManyField('self', null=True, blank=True)
+    forward = models.ManyToManyField('self', null=True, blank=True, through="Forward")
 
     def clean(self):
         if self.answer and self.forward:
