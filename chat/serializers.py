@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from users.serializers import UserSimpleSerializer
@@ -54,12 +55,23 @@ class DialogSerializer(serializers.ModelSerializer):
 class DialogCreateSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
+    forward = ForwardDialogSerializer(many=True, read_only=True)
     def validate(self, data):
         if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
                 raise ValidationError("Наебать не получится, выбери сообщение из своего чата")
 
         return data
+
+    def create(self, validated_data):
+        obj = Dialog.objects.create(**validated_data)
+        print("ffffgfgfgfg", self.initial_data)
+        if self.initial_data.get('forward', ""):
+            print( )
+            for message in self.initial_data['forward']:
+                obj.forward.add(get_object_or_404(Dialog, pk=message), through_defaults={'this_message': obj})
+        obj.save()
+        return obj
     class Meta:
         model = Dialog
         fields = "__all__"
