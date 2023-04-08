@@ -32,6 +32,7 @@ class DialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(read_only=True)
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     answer = AnswerDialogSerializer()
+    forward = ForwardDialogSerializer(many=True, read_only=True)
 
 
     def is_type_user(self, message):
