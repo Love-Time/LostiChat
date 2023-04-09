@@ -21,6 +21,8 @@ class ConversationSerializer(serializers.ModelSerializer):
 
 
 class AnswerDialogSerializer(serializers.ModelSerializer):
+    sender = UserSimpleSerializer()
+    recipient = UserSimpleSerializer()
     class Meta:
         model = Dialog
         exclude = ['answer', 'forward']
