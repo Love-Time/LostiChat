@@ -30,7 +30,7 @@ class ForwardDialogSerializer(serializers.ModelSerializer):
     forward = serializers.SerializerMethodField()
 
     def get_forward(self, data):
-        print(data.forward.all())
+        print(data, data.forward.all())
         if data.forward.all():
             return ForwardDialogSerializer(data.forward, many=True).data
         else:
@@ -78,11 +78,12 @@ class DialogCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         obj = Dialog.objects.create(**validated_data)
-        print("ffffgfgfgfg", self.initial_data)
         if self.initial_data.get('forward', ""):
-            print( )
-            for message in self.initial_data['forward']:
-                obj.forward.add(get_object_or_404(Dialog, pk=message), through_defaults={'this_message': obj})
+            all_forward = [Forward(this_message_id=obj.id, other_message_id=message_id) for message_id in self.initial_data['forward']]
+            Forward.objects.bulk_create(
+                all_forward
+            )
+
         obj.save()
         return obj
     class Meta:
