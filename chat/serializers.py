@@ -27,9 +27,18 @@ class AnswerDialogSerializer(serializers.ModelSerializer):
 
 class ForwardDialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer()
+    forward = serializers.SerializerMethodField()
+
+    def get_forward(self, data):
+        print(data.forward.all())
+        if data.forward.all():
+            return ForwardDialogSerializer(data.forward, many=True).data
+        else:
+            return []
     class Meta:
         model = Dialog
         exclude = ['recipient', 'answer']
+
 
 
 
@@ -55,7 +64,7 @@ class DialogSerializer(serializers.ModelSerializer):
         model = Dialog
         exclude = ['recipient']
 
-ForwardDialogSerializer.forward = ForwardDialogSerializer(many=True)
+
 class DialogCreateSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
