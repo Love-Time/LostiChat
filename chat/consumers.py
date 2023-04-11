@@ -61,7 +61,9 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
                                                                         recipient=self.queue[0][1]['recipient'],
                                                                         request_id=self.queue[0][1]['request_id'],
                                                                         action=self.queue[0][1]['action'],
-                                                                        forward= self.queue[0][1]['forward'])
+                                                                        forward= self.queue[0][1]['forward'],
+                                                                        answer=self.queue[0][1].get('answer', ""))
+
             await channel_layer.group_send(f'recipient_{instance["sender"]["pk"]}',
                                                     {"type": "send_message", "data": instance})
             del self.queue[0]
