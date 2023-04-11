@@ -71,6 +71,7 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     forward = ForwardDialogSerializer(many=True, read_only=True)
+    answer = AnswerDialogSerializer()
     def validate(self, data):
         if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
