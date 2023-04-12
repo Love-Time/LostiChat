@@ -71,14 +71,13 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     forward = ForwardDialogSerializer(many=True, read_only=True)
-    answer = AnswerDialogSerializer(read_only=True, blank=True)
+    answer = AnswerDialogSerializer(read_only=True)
     def validate(self, data):
         if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
                 raise ValidationError("Наебать не получится, выбери сообщение из своего чата")
             if not data.get('message', ""):
                 raise ValidationError("Ну ты болван, напиши хоть что-нибудь")
-
         return data
 
     def create(self, validated_data):
