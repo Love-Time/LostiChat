@@ -76,6 +76,8 @@ class DialogCreateSerializer(serializers.ModelSerializer):
         if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
                 raise ValidationError("Наебать не получится, выбери сообщение из своего чата")
+            if not data.get('message', ""):
+                raise ValidationError("Ну ты болван, напиши хоть что-нибудь")
 
         return data
 
