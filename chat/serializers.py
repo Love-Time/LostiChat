@@ -32,7 +32,6 @@ class ForwardDialogSerializer(serializers.ModelSerializer):
     forward = serializers.SerializerMethodField()
 
     def get_forward(self, data):
-        print(data, data.forward.all())
         if data.forward.all():
             return ForwardDialogSerializer(data.forward, many=True).data
         else:
@@ -73,6 +72,7 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     forward = ForwardDialogSerializer(many=True, read_only=True)
     answer = AnswerDialogSerializer(read_only=True)
     def validate(self, data):
+        print("first first first ", data.get('answer', ""))
         if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
                 raise ValidationError("Наебать не получится, выбери сообщение из своего чата")
