@@ -71,7 +71,7 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     forward = ForwardDialogSerializer(many=True, read_only=True)
-    answer = AnswerDialogSerializer()
+    answer = AnswerDialogSerializer(read_only=True)
     def validate(self, data):
         if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
@@ -86,7 +86,8 @@ class DialogCreateSerializer(serializers.ModelSerializer):
             Forward.objects.bulk_create(
                 all_forward
             )
-
+        elif self.initial_data.get('answer', ""):
+            obj.answer_id = self.initial_data.get('answer', "")
         obj.save()
         return obj
     class Meta:
