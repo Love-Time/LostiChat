@@ -18,7 +18,7 @@ urlpatterns = [
     path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/v1/', include(router.urls)),
     path("api-auth/", include("rest_framework.urls")),
-    path("api/v1/auth/users/settings/", SettingsView.as_view(), name="settings"),
+    path("api/v1/auth/users/settings/me/", SettingsView.as_view(), name="settings"),
 
 ]
 
