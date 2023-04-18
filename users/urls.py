@@ -1,7 +1,7 @@
 from django.urls import path, include, re_path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
-from .views import UserSimpleList, UserViewSet, CodeViewSet
+from .views import UserSimpleList, UserViewSet, CodeViewSet, SettingsView
 
 router = routers.DefaultRouter()
 router.register(r'findPeople', UserSimpleList)
@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/v1/', include(router.urls)),
     path("api-auth/", include("rest_framework.urls")),
+    path("api/v1/auth/users/settings/", SettingsView.as_view(), name="settings"),
 
 ]
 

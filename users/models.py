@@ -2,15 +2,16 @@ import datetime
 from random import randint
 
 from PIL import Image
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-
+from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager
+from django.db import models
 from pytz import timezone
 
 from config import settings
-from config.services import crop_center, crop_center_v2
+from config.services import crop_center_v2
+
 
 
 class CustomUserManager(UserManager):
@@ -65,6 +66,7 @@ class CustomUser(AbstractUser):
             image = crop_center_v2(image)
             image.save(self.image.path)
 
+
 class Code(models.Model):
     email = models.EmailField(max_length=100, unique=True, primary_key=True, editable=False)
     code = models.CharField(max_length=6)
@@ -77,10 +79,18 @@ class Code(models.Model):
     def life(self):
         time_zone = timezone(settings.TIME_ZONE)
         time = datetime.datetime.now(time_zone)
-        if (time-self.time).seconds < settings.CODE_LIFE_SECONDS:
+        if (time - self.time).seconds < settings.CODE_LIFE_SECONDS:
             return True
         return False
 
 
+class Theme(models.Model):
+    theme = models.CharField(max_length=50)
+
+
+class Settings(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    theme = models.ForeignKey(Theme, null=True, blank=True, on_delete=models.SET_NULL)
+    online = models.PositiveIntegerField(default=0)
 
 

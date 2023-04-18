@@ -13,6 +13,7 @@ from djangochannelsrestframework.observer import model_observer
 from rest_framework import status
 from rest_framework.response import Response
 
+from users.models import Settings
 from .models import Dialog
 from .serializers import DialogSerializer, DialogCreateSerializer
 from djangochannelsrestframework.observer.generics import (ObserverModelInstanceMixin, action)
@@ -42,11 +43,21 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             await self.accept()
             self.queue = []
             self.__start = False
+
+            #online+=1
+            user_settings = await sync_to_async(Settings.objects.get)(user=self.scope['user'])
+            user_settings.online = user_settings.online + 1
+            await sync_to_async(user_settings.save)()
         else:
             await self.close(code=401)
 
 
     async def disconnect(self, code):
+        if self.scope['user'] != AnonymousUser():
+            user_settings = await sync_to_async(Settings.objects.get)(user=self.scope['user'])
+            user_settings.online = user_settings.online - 1
+            await sync_to_async(user_settings.save)()
+
         await self.channel_layer.group_discard(
             f'recipient_{self.scope["user"].id}',
             self.channel_name

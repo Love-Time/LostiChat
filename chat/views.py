@@ -86,3 +86,4 @@ class DialogApiView(APIView, DialogMessagePagination):
 
 
         return self.get_paginated_response(serializer.data)
+

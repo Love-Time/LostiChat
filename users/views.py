@@ -1,18 +1,14 @@
+from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet, ViewSet, ModelViewSet
-
-from .models import CustomUser, Code
-from .permissions import IsOwner
-from .serializers import *
-
-from djoser.views import UserViewSet as DjoserUserViewSet
+from rest_framework.viewsets import GenericViewSet
 
 from config.settings import EMAIL_ACTIVATION
+from .serializers import *
 
 
 class UserViewSet(DjoserUserViewSet):
@@ -75,3 +71,21 @@ class UserSimpleList(mixins.ListModelMixin, mixins.RetrieveModelMixin,
 class CodeViewSet(mixins.CreateModelMixin, GenericViewSet):
     queryset = Code.objects.all()
     serializer_class = CheckMailCodeSerializer
+
+
+class SettingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        return Settings.objects.get(pk=pk)
+
+    def patch(self, request):
+        obj = self.get_object(request.user.id)
+        serializer = SettingsSerializer(obj, data=request.data,
+                                        partial=True)  # set partial=True to update a data partially
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=201, data=serializer.data)
+        return Response(status=400, data="wrong parameters")
+
+
