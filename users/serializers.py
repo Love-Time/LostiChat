@@ -12,7 +12,7 @@ User = get_user_model()
 
 
 class SettingsSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault(), read_only=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     online = serializers.IntegerField(read_only=True)
     class Meta:
         model = Settings
