@@ -95,7 +95,7 @@ def media_access(request, Y,m,d, path):
     access_granted = False
 
     user = request.user
-
+    print(user, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
     if user != AnonymousUser:
         image = get_object_or_404(Image, image=f"chat/image/{Y}/{m}/{d}/{path}")
         if user.is_staff:
