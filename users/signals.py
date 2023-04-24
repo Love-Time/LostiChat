@@ -20,6 +20,6 @@ def create_user_channel(sender, instance, created, **kwargs):
 def create_user_channel(sender, instance, created, **kwargs):
     if created:
         Settings.objects.create(user=instance)
-@receiver(post_save, sender=CustomUser)
-def save_user_channel(sender, instance, **kwargs):
-    instance.channel.save()
+# @receiver(post_save, sender=CustomUser)
+# def save_user_channel(sender, instance, **kwargs):
+#     instance.channel.save()

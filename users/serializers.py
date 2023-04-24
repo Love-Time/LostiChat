@@ -10,10 +10,14 @@ from users.models import CustomUser, Code, Settings
 
 User = get_user_model()
 
-
+class Theme(serializers.ModelSerializer):
+    class Meta:
+        model = Settings
+        exclude = []
 class SettingsSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     online = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Settings
         exclude = ['id']

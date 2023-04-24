@@ -13,4 +13,5 @@ admin.site.register(Conversation)
 admin.site.register(Message)
 admin.site.register(Dialog, DialogAdmin)
 admin.site.register(Forward)
+admin.site.register(Image)
 # Register your models here.

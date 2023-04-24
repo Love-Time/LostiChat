@@ -86,6 +86,6 @@ class SettingsView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(status=201, data=serializer.data)
-        return Response(status=400, data="wrong parameters")
+        return Response(status=400)
 
 

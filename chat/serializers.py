@@ -48,6 +48,13 @@ class DialogSerializer(serializers.ModelSerializer):
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     answer = AnswerDialogSerializer()
     forward = ForwardDialogSerializer(many=True, read_only=True)
+    images2= serializers.SerializerMethodField()
+
+    def get_images2(self, data):
+        images = list(data.image_set.all())
+        images = [image.image.url for image in images]
+        return images
+
 
 
     def is_type_user(self, message):

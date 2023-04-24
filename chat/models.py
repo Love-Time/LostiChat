@@ -37,22 +37,31 @@ class Forward(models.Model):
     this_message = models.ForeignKey("Dialog", on_delete=models.CASCADE, related_name='this_message')
     other_message = models.ForeignKey("Dialog", on_delete=models.CASCADE, related_name='other_messages')
 
+
+
 class Dialog(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_duo')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipient_duo')
-    message = models.TextField()
+    message = models.TextField(blank=True, null=True, max_length=4000)
     read = models.BooleanField(default=0)
     time = models.DateTimeField(auto_now_add=True)
 
     answer = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     forward = models.ManyToManyField('self', null=True, blank=True, through="Forward")
-
+    image = models.ManyToManyField()
     def clean(self):
         if self.answer and self.forward:
             raise ValidationError("Так делать нельзя, либо пересылай сообщения, либо отвечай")
+        if not self.message and not self.forward and not self.images:
+            raise ValidationError("Сообщение не может быть пустым, проверьте поля forward и message")
+
+
         super().clean()
 
     class Meta:
         ordering = ('-time',)
 
+class Image(models.Model):
+    dialog = models.ForeignKey(Dialog, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="chat/image/%Y/%m/%d/", null=True, blank=True)
 

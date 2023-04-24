@@ -8,3 +8,4 @@ class AdminUser(admin.ModelAdmin):
 admin.site.register(CustomUser, AdminUser)
 admin.site.register(Settings)
 admin.site.register(Theme)
+

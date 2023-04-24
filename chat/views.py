@@ -87,3 +87,26 @@ class DialogApiView(APIView, DialogMessagePagination):
 
         return self.get_paginated_response(serializer.data)
 
+
+from django.http.response import FileResponse
+from django.http import HttpResponseForbidden
+
+def media_access(request, Y,m,d, path):
+    access_granted = False
+
+    user = request.user
+
+    if user != AnonymousUser:
+        image = get_object_or_404(Image, image=f"chat/image/{Y}/{m}/{d}/{path}")
+        if user.is_staff:
+            # If admin, everything is granted
+            access_granted = True
+        else:
+            if image.dialog.sender == user or image.dialog.recipient==user:
+                access_granted = True
+
+    if access_granted:
+        response = FileResponse(image.image)
+        return response
+    else:
+        return HttpResponseForbidden('Not authorized to access this media.')
