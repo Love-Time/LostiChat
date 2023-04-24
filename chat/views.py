@@ -88,6 +88,17 @@ class DialogApiView(APIView, DialogMessagePagination):
         return self.get_paginated_response(serializer.data)
 
 
+
+class AttachmentsImagesView(APIView):
+    def get(self, request, pk):
+        queryset = list(Image.objects.filter(Q(dialog__sender_id=self.request.user.id) & Q(dialog__recipient_id=pk) |
+                                         Q(dialog__sender_id=pk) & Q(dialog__recipient_id=self.request.user.id)))
+        images = [image.image for image in queryset]
+        return Response(status=200, data=images)
+
+
+
+
 from django.http.response import FileResponse
 from django.http import HttpResponseForbidden
 

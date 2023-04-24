@@ -11,6 +11,7 @@ router.register(r'dialog/message', DialogMessageViewSet)
 urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/dialog/<int:pk>/', DialogApiView.as_view()),
+    path('api/v1/dialog/attachments/images/<int:pk>/', AttachmentsImagesView.as_view()),
     path('media/chat/image/<str:Y>/<str:m>/<str:d>/<str:path>/', media_access, name='media')
 
 ]
