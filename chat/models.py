@@ -48,7 +48,7 @@ class Dialog(models.Model):
 
     answer = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     forward = models.ManyToManyField('self', null=True, blank=True, through="Forward")
-    image = models.ManyToManyField()
+
     def clean(self):
         if self.answer and self.forward:
             raise ValidationError("Так делать нельзя, либо пересылай сообщения, либо отвечай")
