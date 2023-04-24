@@ -50,7 +50,7 @@ class DialogSerializer(serializers.ModelSerializer):
     forward = ForwardDialogSerializer(many=True, read_only=True)
     images = serializers.SerializerMethodField()
 
-    def get_images2(self, data):
+    def get_images(self, data):
         images = list(data.image_set.all())
         images = [image.image.url for image in images]
         return images
