@@ -115,9 +115,20 @@ def media_access(request, Y,m,d, path):
         else:
             if image.dialog.sender == user or image.dialog.recipient==user:
                 access_granted = True
-
     if access_granted:
-        response = FileResponse(image.image)
+        img = open(f"media/chat/image/{Y}/{m}/{d}/{path}", 'rb')
+        response = FileResponse(img)
         return response
     else:
         return HttpResponseForbidden('Not authorized to access this media.')
+
+
+    # if access_granted:
+    #     response = HttpResponse()
+    #     # Content-type will be detected by nginx
+    #     del response['Content-Type']
+    #     response['X-Accel-Redirect'] = '/media/' + path
+    #     return response
+    #
+    # else:
+    #     return HttpResponseForbidden('Not authorized to access this media.')
