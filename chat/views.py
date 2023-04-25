@@ -91,6 +91,7 @@ class DialogApiView(APIView, DialogMessagePagination):
 
 
 class AttachmentsImagesView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         queryset = list(Image.objects.filter(Q(dialog__sender_id=self.request.user.id) & Q(dialog__recipient_id=pk) |
                                          Q(dialog__sender_id=pk) & Q(dialog__recipient_id=self.request.user.id)))
@@ -98,27 +99,48 @@ class AttachmentsImagesView(APIView):
         return Response(status=200, data=images)
 
 
+class MediaAccess(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, pk):
+        access_granted = False
 
-def media_access(request, pk):
-    access_granted = False
-
-    user = request.user
-    print("FFFFFFFFFFFFFFFFFFFFFFFF", user)
-    if user != AnonymousUser:
-        image = get_object_or_404(Image, pk=pk)
-        if user.is_staff:
-            access_granted = True
-        else:
-            if image.dialog.sender == user or image.dialog.recipient == user:
+        user = request.user
+        print("FFFFFFFFFFFFFFFFFFFFFFFF", user)
+        if user != AnonymousUser:
+            image = get_object_or_404(Image, pk=pk)
+            if user.is_staff:
                 access_granted = True
+            else:
+                if image.dialog.sender == user or image.dialog.recipient == user:
+                    access_granted = True
 
+        if access_granted:
+            # img = open(image.image.path, 'rb')
+            response = FileResponse(image.image)
+            return response
+        else:
+            return HttpResponseForbidden('Not authorized to access this media.')
 
-    if access_granted:
-        #img = open(image.image.path, 'rb')
-        response = FileResponse(image.image)
-        return response
-    else:
-        return HttpResponseForbidden('Not authorized to access this media.')
+# def media_access(request, pk):
+#     access_granted = False
+#
+#     user = request.user
+#     print("FFFFFFFFFFFFFFFFFFFFFFFF", user)
+#     if user != AnonymousUser:
+#         image = get_object_or_404(Image, pk=pk)
+#         if user.is_staff:
+#             access_granted = True
+#         else:
+#             if image.dialog.sender == user or image.dialog.recipient == user:
+#                 access_granted = True
+#
+#
+#     if access_granted:
+#         #img = open(image.image.path, 'rb')
+#         response = FileResponse(image.image)
+#         return response
+#     else:
+#         return HttpResponseForbidden('Not authorized to access this media.')
 
 
     # if access_granted:

@@ -12,6 +12,6 @@ urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/dialog/<int:pk>/', DialogApiView.as_view()),
     path('api/v1/dialog/attachments/images/<int:pk>/', AttachmentsImagesView.as_view()),
-    path('media/chat/image/<int:pk>/', media_access, name='media')
+    path('media/chat/image/<int:pk>/', MediaAccess.as_view(), name='media')
 
 ]

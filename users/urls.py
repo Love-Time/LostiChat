@@ -3,7 +3,7 @@ from django.urls import path, include, re_path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
-from chat.views import media_access
+
 from .views import UserSimpleList, UserViewSet, CodeViewSet, SettingsView
 
 router = routers.DefaultRouter()
