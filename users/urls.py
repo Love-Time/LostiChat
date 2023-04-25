@@ -1,6 +1,9 @@
+from django.template.defaulttags import url
 from django.urls import path, include, re_path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+
+from chat.views import media_access
 from .views import UserSimpleList, UserViewSet, CodeViewSet, SettingsView
 
 router = routers.DefaultRouter()
@@ -19,6 +22,5 @@ urlpatterns = [
     path('api/v1/', include(router.urls)),
     path("api-auth/", include("rest_framework.urls")),
     path("api/v1/auth/users/settings/me/", SettingsView.as_view(), name="settings"),
-
 ]
 

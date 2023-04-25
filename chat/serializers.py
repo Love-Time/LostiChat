@@ -52,7 +52,7 @@ class DialogSerializer(serializers.ModelSerializer):
 
     def get_images(self, data):
         images = list(data.image_set.all())
-        images = [image.image.url for image in images]
+        images = [image.id for image in images]
         return images
 
 
