@@ -103,7 +103,7 @@ def media_access(request, pk):
     access_granted = False
 
     user = request.user
-
+    print("FFFFFFFFFFFFFFFFFFFFFFFF", user)
     if user != AnonymousUser:
         image = get_object_or_404(Image, pk=pk)
         if user.is_staff:
