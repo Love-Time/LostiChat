@@ -115,8 +115,8 @@ class MediaAccess(APIView):
                     access_granted = True
 
         if access_granted:
-            # img = open(image.image.path, 'rb')
-            response = FileResponse(image.image)
+            img = open(image.image.path, 'rb')
+            response = FileResponse(img)
             return response
         else:
             return HttpResponseForbidden('Not authorized to access this media.')
