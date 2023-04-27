@@ -10,6 +10,10 @@ from users.models import CustomUser, Code, Settings
 
 User = get_user_model()
 
+class GetImage():
+    def get_image(self, obj):
+        if obj.image:
+            return "/public" + obj.image.url
 class Theme(serializers.ModelSerializer):
     class Meta:
         model = Settings
@@ -23,7 +27,7 @@ class SettingsSerializer(serializers.ModelSerializer):
         exclude = ['id']
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer, GetImage):
     image = serializers.SerializerMethodField()
     settings = serializers.SerializerMethodField()
 
@@ -31,9 +35,6 @@ class UserSerializer(serializers.ModelSerializer):
         settings = Settings.objects.get(user=obj)
         return SettingsSerializer(settings).data
 
-    def get_image(self, obj):
-        if obj.image:
-            return obj.image.url
 
     class Meta:
         model = User
@@ -61,15 +62,13 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer, GetImage):
     password = serializers.CharField(style={"input_type": "password"}, write_only=True)
     code = serializers.CharField(read_only=True)
     image = serializers.SerializerMethodField()
     img = serializers.ImageField(source='image', write_only=True)
 
-    def get_image(self, obj):
-        if obj.image:
-            return obj.image.url
+
 
     default_error_messages = {
         "cannot_create_user": settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR
@@ -123,7 +122,7 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ['auth_token', 'user']
 
 
-class UserSimpleSerializer(serializers.ModelSerializer):
+class UserSimpleSerializer(serializers.ModelSerializer, GetImage):
     image = serializers.SerializerMethodField()
     online = serializers.SerializerMethodField()
 
@@ -134,9 +133,7 @@ class UserSimpleSerializer(serializers.ModelSerializer):
         else:
             return False
 
-    def get_image(self, obj):
-        if obj.image:
-            return obj.image.url
+
 
     class Meta:
         model = User
