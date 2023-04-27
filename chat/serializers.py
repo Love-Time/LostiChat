@@ -1,17 +1,19 @@
-from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from users.serializers import UserSimpleSerializer
 from .models import *
-from django.contrib.auth import get_user_model
-from rest_framework.exceptions import ValidationError
+
 User = get_user_model()
+
 
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['sender', 'conversation', 'message', 'time']
         read_only_fields = ['sender', 'conversation', 'time']
+
 
 class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,9 +25,11 @@ class ConversationSerializer(serializers.ModelSerializer):
 class AnswerDialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer()
     recipient = UserSimpleSerializer()
+
     class Meta:
         model = Dialog
         exclude = ['answer', 'forward']
+
 
 class ForwardDialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer()
@@ -36,18 +40,26 @@ class ForwardDialogSerializer(serializers.ModelSerializer):
             return ForwardDialogSerializer(data.forward, many=True).data
         else:
             return []
+
     class Meta:
         model = Dialog
         exclude = ['recipient', 'answer']
 
 
 class ImageSerializer(serializers.ModelSerializer):
-    size = serializers.SerializerMethodField()
-    def get_size(self, data):
-        return (data.width, data.height)
+    width = serializers.SerializerMethodField()
+    height = serializers.SerializerMethodField()
+
+    def get_width(self, data):
+        return data.width
+
+    def get_height(self, data):
+        return data.width
+
     class Meta:
-        model=Image
+        model = Image
         fields = "__all__"
+
 
 class DialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(read_only=True)
@@ -57,11 +69,9 @@ class DialogSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
 
     def get_images(self, data):
-        images =data.image_set.all()
+        images = data.image_set.all()
         images = ImageSerializer(images, many=True)
         return images
-
-
 
     def is_type_user(self, message):
         if isinstance(self.context['request'], dict):
@@ -84,6 +94,7 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     forward = ForwardDialogSerializer(many=True, read_only=True)
     answer = AnswerDialogSerializer(read_only=True)
+
     def validate(self, data):
         print("first first first ", data.get('answer', ""))
         if data.get('answer', ""):
@@ -98,7 +109,8 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         obj = Dialog.objects.create(**validated_data)
         if self.initial_data.get('forward', ""):
-            all_forward = [Forward(this_message_id=obj.id, other_message_id=message_id) for message_id in self.initial_data['forward']]
+            all_forward = [Forward(this_message_id=obj.id, other_message_id=message_id) for message_id in
+                           self.initial_data['forward']]
             Forward.objects.bulk_create(
                 all_forward
             )
@@ -106,13 +118,10 @@ class DialogCreateSerializer(serializers.ModelSerializer):
             obj.answer_id = self.initial_data.get('answer', "")
         obj.save()
         return obj
+
     class Meta:
         model = Dialog
         fields = "__all__"
         extra_kwargs = {
             'recipient': {'write_only': True}
         }
-
-
-
-
