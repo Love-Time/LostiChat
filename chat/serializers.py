@@ -51,10 +51,10 @@ class ImageSerializer(serializers.ModelSerializer):
     height = serializers.SerializerMethodField()
 
     def get_width(self, data):
-        return data.width
+        return data.image.width
 
     def get_height(self, data):
-        return data.width
+        return data.image.width
 
     class Meta:
         model = Image
