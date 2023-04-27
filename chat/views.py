@@ -3,6 +3,7 @@ from django.http.response import FileResponse
 from django.http import HttpResponseForbidden
 from django.db.models import Q, QuerySet
 from rest_framework import mixins
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -95,7 +96,7 @@ class AttachmentsImagesView(APIView):
     def get(self, request, pk):
         queryset = list(Image.objects.filter(Q(dialog__sender_id=self.request.user.id) & Q(dialog__recipient_id=pk) |
                                          Q(dialog__sender_id=pk) & Q(dialog__recipient_id=self.request.user.id)))
-        images = [image.pk for image in queryset]
+        images = ImageSerializer(queryset, many=True).data
         return Response(status=200, data=images)
 
 
