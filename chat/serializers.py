@@ -70,7 +70,7 @@ class DialogSerializer(serializers.ModelSerializer):
 
     def get_images(self, data):
         images = data.image_set.all()
-        images = ImageSerializer(images, many=True)
+        images = ImageSerializer(images, many=True).data
         return images
 
     def is_type_user(self, message):
