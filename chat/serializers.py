@@ -41,7 +41,13 @@ class ForwardDialogSerializer(serializers.ModelSerializer):
         exclude = ['recipient', 'answer']
 
 
-
+class ImageSerializer(serializers.ModelSerializer):
+    size = serializers.SerializerMethodField()
+    def get_size(self, data):
+        return (data.width, data.height)
+    class Meta:
+        model=Image
+        fields = "__all__"
 
 class DialogSerializer(serializers.ModelSerializer):
     sender = UserSimpleSerializer(read_only=True)
@@ -51,8 +57,8 @@ class DialogSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
 
     def get_images(self, data):
-        images = list(data.image_set.all())
-        images = [image.id for image in images]
+        images =data.image_set.all()
+        images = ImageSerializer(images, many=True)
         return images
 
 
