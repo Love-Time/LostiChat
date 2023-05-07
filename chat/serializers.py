@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -94,15 +93,14 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     forward = ForwardDialogSerializer(many=True, read_only=True)
     answer = AnswerDialogSerializer(read_only=True)
+    image = ImageSerializer(many=True)
 
     def validate(self, data):
-        print("first first first ", data.get('answer', ""))
+
         if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
                 raise ValidationError("Наебать не получится, выбери сообщение из своего чата")
-            print("i am here 3434343434")
             if not data.get('message', ""):
-                print("why not&&&&&&&&&&&&&&&&&&&&&&&&&&&&", data.get('message', ""))
                 raise ValidationError("Ну ты болван, напиши хоть что-нибудь")
         return data
 
@@ -116,6 +114,7 @@ class DialogCreateSerializer(serializers.ModelSerializer):
             )
         elif self.initial_data.get('answer', ""):
             obj.answer_id = self.initial_data.get('answer', "")
+        obj.read = False
         obj.save()
         return obj
 

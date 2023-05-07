@@ -1,14 +1,16 @@
 import math
-from django.http.response import FileResponse
+
+from django.db.models import Q
 from django.http import HttpResponseForbidden
-from django.db.models import Q, QuerySet
+from django.http.response import FileResponse
 from rest_framework import mixins
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework.viewsets import GenericViewSet
+
 from .permissions import *
 from .serializers import *
 
@@ -55,10 +57,13 @@ class DialogMessageLastList(mixins.ListModelMixin,
 
         return message
 
+
 class DialogMessagePagination(PageNumberPagination):
     page_size = 3
     page_size_query_param = "page_size"
     max_page_size = 200
+
+
 class DialogMessageViewSet(mixins.CreateModelMixin,
                            mixins.RetrieveModelMixin,
                            mixins.UpdateModelMixin,
@@ -80,28 +85,29 @@ class DialogMessageViewSet(mixins.CreateModelMixin,
 
 class DialogApiView(APIView, DialogMessagePagination):
     permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         queryset = Dialog.objects.filter(Q(sender_id=self.request.user.id) & Q(recipient_id=pk) |
                                          Q(sender_id=pk) & Q(recipient_id=self.request.user.id))
         data = self.paginate_queryset(queryset, request, view=self)
         serializer = DialogSerializer(data, many=True, context={'request': request})
 
-
         return self.get_paginated_response(serializer.data)
-
 
 
 class AttachmentsImagesView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         queryset = list(Image.objects.filter(Q(dialog__sender_id=self.request.user.id) & Q(dialog__recipient_id=pk) |
-                                         Q(dialog__sender_id=pk) & Q(dialog__recipient_id=self.request.user.id)))
+                                             Q(dialog__sender_id=pk) & Q(dialog__recipient_id=self.request.user.id)))
         images = ImageSerializer(queryset, many=True).data
         return Response(status=200, data=images)
 
 
 class MediaAccess(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         access_granted = False
 
@@ -144,12 +150,12 @@ class MediaAccess(APIView):
 #         return HttpResponseForbidden('Not authorized to access this media.')
 
 
-    # if access_granted:
-    #     response = HttpResponse()
-    #     # Content-type will be detected by nginx
-    #     del response['Content-Type']
-    #     response['X-Accel-Redirect'] = '/media/' + path
-    #     return response
-    #
-    # else:
-    #     return HttpResponseForbidden('Not authorized to access this media.')
+# if access_granted:
+#     response = HttpResponse()
+#     # Content-type will be detected by nginx
+#     del response['Content-Type']
+#     response['X-Accel-Redirect'] = '/media/' + path
+#     return response
+#
+# else:
+#     return HttpResponseForbidden('Not authorized to access this media.')

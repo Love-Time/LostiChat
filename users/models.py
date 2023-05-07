@@ -1,8 +1,6 @@
 import datetime
 from random import randint
-
 from PIL import Image
-from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager
@@ -13,9 +11,7 @@ from config import settings
 from config.services import crop_center_v2
 
 
-
 class CustomUserManager(UserManager):
-
     def _create_user(self, email, password, **extra_fields):
         email = self.normalize_email(email)
         user = CustomUser(email=email, **extra_fields)

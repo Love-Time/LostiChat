@@ -5,7 +5,6 @@ from django.db import IntegrityError, transaction
 from djoser.compat import get_user_email_field_name, get_user_email
 from djoser.conf import settings
 from rest_framework import serializers
-
 from users.models import CustomUser, Code, Settings
 
 User = get_user_model()
@@ -34,8 +33,6 @@ class UserSerializer(serializers.ModelSerializer, GetImage):
     def get_settings(self, obj):
         settings = Settings.objects.get(user=obj)
         return SettingsSerializer(settings).data
-
-
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
@@ -67,8 +64,6 @@ class UserCreateSerializer(serializers.ModelSerializer, GetImage):
     code = serializers.CharField(read_only=True)
     image = serializers.SerializerMethodField()
     img = serializers.ImageField(source='image', write_only=True)
-
-
 
     default_error_messages = {
         "cannot_create_user": settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR

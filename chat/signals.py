@@ -19,6 +19,15 @@ def send_message(self, event):
             }
         ))
 
+def send_message2(self, event):
+    async_to_sync(
+        self.send_json(
+            {
+                'data': event['data'],
+                'status': status.HTTP_200_OK,
+                'action': "send_message"
+            }
+        ))
 
 channel_layer = get_channel_layer()
 
@@ -27,6 +36,9 @@ channel_layer = get_channel_layer()
 def send_message(sender, instance, created, **kwargs):
     if created:
         serializer = DialogSerializer(instance)
-        print(serializer.data)
+
         async_to_sync(channel_layer.group_send)(f'recipient_{instance.recipient.pk}',
+                                                {"type": "send_message", "data": serializer.data})
+
+        async_to_sync(channel_layer.group_send)(f'recipient_{instance.sender.pk}',
                                                 {"type": "send_message", "data": serializer.data})

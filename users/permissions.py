@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import permissions
 
-
-
 class IsNotBlockOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(
@@ -40,5 +38,4 @@ class IsOnlyAnonymousRegistration(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method == "POST":
             return request.user == AnonymousUser
-
         return False

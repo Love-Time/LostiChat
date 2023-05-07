@@ -67,14 +67,12 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     async def do_queue(self):
         self.__start = True
         while self.queue:
-            print(self.queue[0])
             instance, data = await sync_to_async(self.create_dialog_message2)(message=self.queue[0][1]['message'],
                                                                         recipient=self.queue[0][1]['recipient'],
                                                                         request_id=self.queue[0][1]['request_id'],
-                                                                        action=self.queue[0][1]['action'],
-                                                                        forward= self.queue[0][1]['forward'],
+                                                                        action=self.queue[0][1].get('action',""),
+                                                                        forward= self.queue[0][1].get('forward', ""),
                                                                         answer=self.queue[0][1].get('answer', ""))
-            print(instance, 'lalalalalalalalalalalal')
 
             await channel_layer.group_send(f'recipient_{instance["sender"]["pk"]}',
                                                     {"type": "send_message", "data": instance})
@@ -96,7 +94,7 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
         serializer = DialogCreateSerializer(data=kwargs, context= {'request': myRequest(self.scope['user'])})
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer, **kwargs)
-        return serializer.data, status.HTTP_201_CREATED
+
 
 
 

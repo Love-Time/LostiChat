@@ -1,9 +1,5 @@
 import os
-
-from asgiref.sync import async_to_sync
 from django.apps import AppConfig
-
-
 
 
 class UsersConfig(AppConfig):

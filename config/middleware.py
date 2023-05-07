@@ -62,11 +62,6 @@ class TokenAuthMiddleware(BaseMiddleware):
             token_key = (dict((x.split('=') for x in scope['query_string'].decode().split("&")))).get('token', None)
         except ValueError:
             token_key = None
-        # try:
-        #     token_key = dict(scope['headers'])[b'sec-websocket-protocol'].decode('utf-8')
-        #     print('d1', token_key)
-        # except ValueError:
-        #     token_key = None
 
         scope['user'] = await get_user(token_key)
         print('d2', scope['user'])
