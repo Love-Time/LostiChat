@@ -89,14 +89,15 @@ class DialogSerializer(serializers.ModelSerializer):
 
 
 class DialogCreateSerializer(serializers.ModelSerializer):
-    sender = UserSimpleSerializer(default=serializers.CurrentUserDefault())
+    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
     recip = UserSimpleSerializer(source='recipient', read_only=True)
     forward = ForwardDialogSerializer(many=True, read_only=True)
     answer = AnswerDialogSerializer(read_only=True)
-    image = ImageSerializer(many=True)
+    image = ImageSerializer(many=True, default=[])
 
     def validate(self, data):
-
+        user = self.context['request'].user
+        print("FFFFFFFFFFFFFFFFFFFFFFFFFFF", user)
         if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
                 raise ValidationError("Наебать не получится, выбери сообщение из своего чата")
