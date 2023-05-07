@@ -67,15 +67,15 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
     async def do_queue(self):
         self.__start = True
         while self.queue:
-            instance, data = await sync_to_async(self.create_dialog_message2)(message=self.queue[0][1]['message'],
+            await sync_to_async(self.create_dialog_message2)(message=self.queue[0][1]['message'],
                                                                         recipient=self.queue[0][1]['recipient'],
                                                                         request_id=self.queue[0][1]['request_id'],
                                                                         action=self.queue[0][1].get('action',""),
                                                                         forward= self.queue[0][1].get('forward', ""),
                                                                         answer=self.queue[0][1].get('answer', ""))
 
-            await channel_layer.group_send(f'recipient_{instance["sender"]["pk"]}',
-                                                    {"type": "send_message", "data": instance})
+            # await channel_layer.group_send(f'recipient_{instance["sender"]["pk"]}',
+            #                                         {"type": "send_message", "data": instance})
             del self.queue[0]
             await asyncio.sleep(1)
         self.__start = False

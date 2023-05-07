@@ -96,8 +96,6 @@ class DialogCreateSerializer(serializers.ModelSerializer):
     image = ImageSerializer(many=True, default=[])
 
     def validate(self, data):
-        user = self.context['request'].user
-        print("FFFFFFFFFFFFFFFFFFFFFFFFFFF", user)
         if data.get('answer', ""):
             if {data['sender'], data['recipient']} != {data['answer'].sender, data['answer'].recipient}:
                 raise ValidationError("Наебать не получится, выбери сообщение из своего чата")
