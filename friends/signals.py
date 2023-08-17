@@ -17,6 +17,8 @@ def send_friend(self, event):
                 'action': "friend"
             }
         ))
+
+
 channel_layer = get_channel_layer()
 
 
@@ -28,22 +30,22 @@ def create_user_channel(sender, instance: Friends, created, **kwargs):
         # Сказать второму, что ему отправили запрос в друзья
         async_to_sync(channel_layer.group_send)(f'recipient_{instance.second_user.id}',
                                                 {"type": "send_friend", "data": {'type': 'friend_request',
-                                                                                  'description': "Пришёл запрос в друзья",
-                                                                                  'user': serializer.data}})
+                                                                                 'description': "Пришёл запрос в друзья",
+                                                                                 'user': serializer.data}})
         return
     if instance.accepted == 1 and another_request == 1:
         # Сказать второму, что его запрос в друзья приняли
         async_to_sync(channel_layer.group_send)(f'recipient_{instance.second_user.id}',
                                                 {"type": "send_friend", "data": {'type': 'friend_accepted',
-                                                                                  'description': "Запрос в друзья принят",
-                                                                                  'user': serializer.data}})
+                                                                                 'description': "Запрос в друзья принят",
+                                                                                 'user': serializer.data}})
         return
     if instance.accepted == -1 and another_request == 1:
         # Сказать второму, что его запрос отклонили
         async_to_sync(channel_layer.group_send)(f'recipient_{instance.second_user.id}',
                                                 {"type": "send_friend", "data": {'type': 'friend_denied',
-                                                                                  'description': "Запрос в друзья отклонён",
-                                                                                  'user': serializer.data}})
+                                                                                 'description': "Запрос в друзья отклонён",
+                                                                                 'user': serializer.data}})
         return
 
 
@@ -55,13 +57,13 @@ def create_user_channel(sender, instance: Friends, **kwargs):
         # Сказать второму, что пользователь передумал отправлять запрос в друзья
         async_to_sync(channel_layer.group_send)(f'recipient_{instance.second_user.id}',
                                                 {"type": "send_friend", "data": {'type': 'friend_canceled',
-                                                                                  'description': "Запрос в друзья отменён",
-                                                                                  'user': serializer.data}})
+                                                                                 'description': "Запрос в друзья отменён",
+                                                                                 'user': serializer.data}})
         return
     if another_request[0].accepted == 1 and instance.accepted == 1:
         # Сказать второму, что его удалили из друзей
         async_to_sync(channel_layer.group_send)(f'recipient_{instance.second_user.id}',
                                                 {"type": "send_friend", "data": {'type': 'friend_delete',
-                                                                                  'description': "Удалён из друзей",
-                                                                                  'user': serializer.data}})
+                                                                                 'description': "Удалён из друзей",
+                                                                                 'user': serializer.data}})
         return

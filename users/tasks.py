@@ -1,12 +1,9 @@
 import datetime
-
 from pytz import timezone
-
 from config import settings
 from config.celery import app
 from .service import send_activation_email
 from .models import Code
-
 
 @app.task
 def send_activation_code(content, html, email, code):

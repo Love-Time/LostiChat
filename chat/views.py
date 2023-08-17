@@ -15,7 +15,6 @@ from .permissions import *
 from .serializers import *
 
 
-# Create your views here.
 
 class DuoConversationViewSet(mixins.RetrieveModelMixin,
                              mixins.ListModelMixin,

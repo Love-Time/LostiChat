@@ -1,23 +1,13 @@
 import asyncio
-import json
-import socket
-import time
-
-from asgiref.sync import sync_to_async, async_to_sync
-from channels.db import database_sync_to_async
+from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from djangochannelsrestframework import mixins
 from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
-from djangochannelsrestframework.observer import model_observer
 from rest_framework import status
-from rest_framework.response import Response
-
 from users.models import Settings
 from .models import Dialog
-from .serializers import DialogSerializer, DialogCreateSerializer
+from .serializers import DialogCreateSerializer
 from djangochannelsrestframework.observer.generics import (ObserverModelInstanceMixin, action)
-from rest_framework.permissions import IsAuthenticated
 from channels.layers import get_channel_layer
 from django.contrib.auth.models import AnonymousUser
 
@@ -44,7 +34,6 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             self.queue = []
             self.__start = False
 
-            #online+=1
             user_settings = await sync_to_async(Settings.objects.get)(user=self.scope['user'])
             user_settings.online = user_settings.online + 1
             await sync_to_async(user_settings.save)()
@@ -73,9 +62,6 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
                                                                         action=self.queue[0][1].get('action',""),
                                                                         forward= self.queue[0][1].get('forward', ""),
                                                                         answer=self.queue[0][1].get('answer', ""))
-
-            # await channel_layer.group_send(f'recipient_{instance["sender"]["pk"]}',
-            #                                         {"type": "send_message", "data": instance})
             del self.queue[0]
             await asyncio.sleep(1)
         self.__start = False
@@ -89,15 +75,9 @@ class DialogMessageConsumer(mixins.CreateModelMixin,
             asyncio.create_task(self.do_queue())
 
     def create_dialog_message2(self, **kwargs):
-        #recip = await database_sync_to_async(get_object_or_404)(User, pk=recipient)
-
         serializer = DialogCreateSerializer(data=kwargs, context= {'request': myRequest(self.scope['user'])})
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer, **kwargs)
-
-
-
-
 
     async def send_message(self, event):
         await self.send_json(

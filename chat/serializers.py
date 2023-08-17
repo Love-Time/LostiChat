@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
 from users.serializers import UserSimpleSerializer
 from .models import *
 
@@ -50,14 +49,18 @@ class ImageSerializer(serializers.ModelSerializer):
     height = serializers.SerializerMethodField()
 
     def get_width(self, data):
-        return data.image.width
+        if data:
+            return data.image.width
+        return 0
 
     def get_height(self, data):
-        return data.image.height
+        if data:
+            return data.image.height
+        return 0
 
     class Meta:
         model = Image
-        fields = "__all__"
+        exclude = ['dialog']
 
 
 class DialogSerializer(serializers.ModelSerializer):

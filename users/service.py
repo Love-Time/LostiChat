@@ -1,8 +1,5 @@
 from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-
 from users.models import Settings
-
 
 def send_activation_email(content, html, email, code):
     sendMail(text_content=content,

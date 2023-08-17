@@ -41,7 +41,7 @@ ALLOWED_HOSTS = [
 ]
 INTERNAL_IPS = ['127.0.0.1', 'losti.ru']
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1/', 'http://3.77.55.244/', 'https://*', 'https://losti.ru:8432']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1/', 'http://3.77.55.244/', 'https://*', 'https://losti.ru:8432', 'http://losti.ru:81' ]
 
 # Application definition
 
@@ -257,6 +257,7 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
@@ -265,7 +266,6 @@ EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', '')
 DOMAIN = 'localhost:3000'
 SITE_NAME = 'YouTube_Clone'
-
 
 
 CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
