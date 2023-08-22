@@ -1,5 +1,6 @@
 import math
 
+from django.contrib.auth.models import AnonymousUser
 from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.http.response import FileResponse
@@ -34,27 +35,11 @@ class DialogMessageLastList(mixins.ListModelMixin,
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = Dialog.objects.raw(f'SELECT * \
-                                        FROM {Dialog._meta.db_table} \
-                                        WHERE sender_id = {self.request.user.id} OR \
-                                              recipient_id = {self.request.user.id}\
-                                        GROUP BY id, sender_id, recipient_id \
-                                        ORDER BY time DESC')
-        message = list(queryset)
-        len_message = len(message)
-        black_list = [None] * (math.ceil(len_message) + 1)
-        len_black_list = 0
-
-        k = 0
-        for i in range(len_message):
-            if {message[k].sender, message[k].recipient} not in black_list:
-                black_list[len_black_list] = {message[k].sender, message[k].recipient}
-                len_black_list += 1
-                k += 1
-                continue
-            del message[k]
-
-        return message
+        queryset = Dialog.objects.raw(f'''Select *, max(time), sender_id + recipient_id as my_sum from {Dialog._meta.db_table}
+                                            where (sender_id == {self.request.user.id}  or recipient_id == {self.request.user.id}) 
+                                            GROUP BY my_sum
+                                            ORDER BY time DESC''')
+        return queryset
 
 
 class DialogMessagePagination(PageNumberPagination):
