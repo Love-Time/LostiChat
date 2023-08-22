@@ -6,22 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d5023bc5-4cd1-4298-8cf1-2634ef470dca" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/consumers.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/consumers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/permissions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/friends/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/friends/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/tasks.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/tests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +40,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/losti-chat&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/LostiChat&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -145,7 +130,9 @@
       <workItem from="1675275733075" duration="162000" />
       <workItem from="1675338923567" duration="6207000" />
       <workItem from="1675350057337" duration="943000" />
-      <workItem from="1692275194100" duration="1512000" />
+      <workItem from="1692275194100" duration="4777000" />
+      <workItem from="1692387961868" duration="8000" />
+      <workItem from="1692719741782" duration="676000" />
     </task>
     <servers />
   </component>
